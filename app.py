@@ -209,7 +209,7 @@ def servicios():
 @app.route('/proyectos')
 def proyectos():
     try:
-        # MODIFICACIÓN DE SEGURIDAD: Fuerza la creación antes de consultar
+        # PROTECCIÓN EXTRA: Aseguramos tablas y datos en cada entrada a la ruta
         db.create_all()
         crear_proyectos_iniciales()
         
@@ -226,10 +226,15 @@ def soporte():
 
 @app.route('/proyecto/<int:id>')
 def ver_proyecto(id):
-    proyecto = Proyecto.query.get_or_404(id)
-    if es_celular():
-        return render_template('detalle_proyecto_celular.html', proyecto=proyecto)
-    return render_template('detalle_proyecto.html', proyecto=proyecto)
+    try:
+        # PROTECCIÓN EXTRA: Aseguramos que la tabla exista antes de buscar por ID
+        db.create_all()
+        proyecto = Proyecto.query.get_or_404(id)
+        if es_celular():
+            return render_template('detalle_proyecto_celular.html', proyecto=proyecto)
+        return render_template('detalle_proyecto.html', proyecto=proyecto)
+    except Exception as e:
+        return f"Error al cargar el proyecto: {str(e)}", 500
 
 @app.route('/proyecto/<int:id>/visor-tecnico')
 def visor3d_tecnico(id):
