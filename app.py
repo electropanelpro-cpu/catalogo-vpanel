@@ -107,9 +107,9 @@ app.config['MAIL_DEFAULT_SENDER'] = 'electropanelpro@gmail.com'
 mail = Mail(app)
 
 # ----------------------
-# BASE DE DATOS (RESETEADA PARA RENDER)
+# BASE DE DATOS (RESETEADA CON NUEVO NOMBRE)
 # ----------------------
-db_path = os.path.join(base_path, 'vpanel_oficial.db')
+db_path = os.path.join(base_path, 'vpanel_master.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -208,8 +208,13 @@ def servicios():
 
 @app.route('/proyectos')
 def proyectos():
-    proyectos_data = Proyecto.query.all()
-    return render_template('proyectos_celular.html', proyectos=proyectos_data) if es_celular() else render_template('proyectos.html', proyectos=proyectos_data)
+    try:
+        proyectos_data = Proyecto.query.all()
+        if es_celular():
+            return render_template('proyectos_celular.html', proyectos=proyectos_data)
+        return render_template('proyectos.html', proyectos=proyectos_data)
+    except Exception as e:
+        return f"Error en base de datos: {str(e)}", 500
 
 @app.route('/soporte')
 def soporte():
