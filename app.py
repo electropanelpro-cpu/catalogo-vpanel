@@ -14,25 +14,20 @@ except ImportError:
     GUI_AVAILABLE = False
 
 # ----------------------
-# DETECTAR RUTA (Optimizado para Ejecutables y Servidores)
+# DETECTAR RUTA (Optimizado para Render y Local)
 # ----------------------
-if getattr(sys, 'frozen', False):
-    base_path = os.path.dirname(sys.executable)
-    template_static_path = sys._MEIPASS
-else:
-    base_path = os.path.abspath(os.path.dirname(__file__))
-    template_static_path = base_path
+base_path = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(
     __name__,
-    template_folder=os.path.join(template_static_path, 'templates'),
-    static_folder=os.path.join(template_static_path, 'static')
+    template_folder=os.path.join(base_path, 'templates'),
+    static_folder=os.path.join(base_path, 'static')
 )
 
 app.secret_key = 'electropanel_secret_key'
 
 # ----------------------
-# FUNCIÓN PARA DETECTAR CELULAR (OPTIMIZADA)
+# FUNCIÓN PARA DETECTAR CELULAR
 # ----------------------
 def es_celular():
     ua = request.headers.get('User-Agent', '').lower()
@@ -40,7 +35,7 @@ def es_celular():
     return any(x in ua for x in plataformas)
 
 # ----------------------
-# CONFIGURACIÓN DE IA LOCAL (CONOCIMIENTO_PANEL)
+# CONFIGURACIÓN DE IA LOCAL
 # ----------------------
 CONOCIMIENTO_PANEL = {
     "normas": [
@@ -204,7 +199,8 @@ def crear_proyectos_iniciales():
         db.session.add_all(proyectos_lista)
         db.session.commit()
 
-# --- RUTAS ---
+# --- RUTAS SINCRONIZADAS CON TUS TEMPLATES ---
+
 @app.route('/')
 def inicio():
     return render_template('index_celular.html') if es_celular() else render_template('index.html')
@@ -225,7 +221,10 @@ def soporte():
 @app.route('/proyecto/<int:id>')
 def ver_proyecto(id):
     proyecto = Proyecto.query.get_or_404(id)
-    return render_template('detalle_proyecto_celular.html', proyecto=proyecto) if es_celular() else render_template('detalle_proyecto.html', proyecto=proyecto)
+    # RUTA CORREGIDA SEGÚN TUS TEMPLATES
+    if es_celular():
+        return render_template('detalle_proyecto_celular.html', proyecto=proyecto)
+    return render_template('detalle_proyecto.html', proyecto=proyecto)
 
 @app.route('/proyecto/<int:id>/visor-tecnico')
 def visor3d_tecnico(id):
@@ -233,7 +232,8 @@ def visor3d_tecnico(id):
         proyecto = Proyecto.query.get_or_404(id)
         if es_celular():
             return render_template('visor_tecnico_celular.html', proyecto=proyecto)
-        return render_template('detalle_proyecto.html', proyecto=proyecto)
+        # En PC, según tu captura, se llama visor3d.html
+        return render_template('visor3d.html', proyecto=proyecto)
     except Exception as e:
         return f"Error interno: {str(e)}", 500
 
@@ -241,7 +241,9 @@ def visor3d_tecnico(id):
 def descargar_plano(id):
     directorio_planos = os.path.join(app.static_folder, 'planos')
     nombre_archivo = f'plano_{id}.pdf'
-    return send_from_directory(directorio_planos, nombre_archivo) if os.path.exists(os.path.join(directorio_planos, nombre_archivo)) else ("Ficha no encontrada", 404)
+    if os.path.exists(os.path.join(directorio_planos, nombre_archivo)):
+        return send_from_directory(directorio_planos, nombre_archivo)
+    return "Ficha técnica no encontrada", 404
 
 @app.route('/preguntar', methods=['POST'])
 def preguntar():
@@ -255,7 +257,7 @@ def preguntar():
         elif "falla" in msg: resp = random.choice(CONOCIMIENTO_PANEL["fallas"])
         else: resp = random.choice(CONOCIMIENTO_PANEL["default"])
         return jsonify({"respuesta": resp})
-    except: return jsonify({"respuesta": "Error."}), 500
+    except: return jsonify({"respuesta": "Error en el núcleo de IA."}), 500
 
 @app.route('/contacto', methods=['GET', 'POST'])
 def contacto():
@@ -268,15 +270,13 @@ def contacto():
         msg = Message(
             subject=f"NUEVA COTIZACIÓN: {asunto}",
             recipients=['electropanelpro@gmail.com'],
-            body=f"De: {nombre}\nEmail del Cliente: {email_cliente}\nAsunto: {asunto}\n\nMensaje:\n{mensaje}"
+            body=f"De: {nombre}\nEmail: {email_cliente}\nMensaje:\n{mensaje}"
         )
-        
         try:
             mail.send(msg)
             flash("¡Mensaje enviado con éxito!", "success")
-        except Exception as e:
-            flash(f"Error al enviar: {str(e)}", "danger")
-            
+        except:
+            flash("Error al enviar correo.", "danger")
         return redirect(url_for('contacto'))
     
     return render_template('contacto_celular.html') if es_celular() else render_template('contacto.html')
@@ -288,23 +288,19 @@ def comentar(id):
     db.session.commit()
     return jsonify({"success": True, "nombre": nuevo.nombre, "texto": nuevo.texto})
 
+# --- EJECUCIÓN ---
 if __name__ == '__main__':
     with app.app_context():
-        # Lógica para recrear DB solo si es necesario localmente
-        if not os.environ.get("RENDER"):
-             db.create_all()
-             crear_proyectos_iniciales()
-        else:
-             db.create_all()
-             crear_proyectos_iniciales()
+        db.create_all()
+        crear_proyectos_iniciales()
 
-    if GUI_AVAILABLE and not os.environ.get("RENDER"):
+    if not os.environ.get("RENDER") and GUI_AVAILABLE:
+        # Modo Escritorio Local
         threading.Thread(target=lambda: app.run(host='127.0.0.1', port=5000, debug=False, use_reloader=False), daemon=True).start()
-        import time
-        time.sleep(1.5)
-        ventana = webview.create_window('ElectroPanel Pro v2.0', 'http://127.0.0.1:5000/', width=1280, height=850)
+        import time; time.sleep(1.5)
+        webview.create_window('ElectroPanel Pro v2.0', 'http://127.0.0.1:5000/', width=1280, height=850)
         webview.start(private_mode=True)
     else:
-        # Puerto dinámico para Render
+        # Modo Servidor Render
         port = int(os.environ.get("PORT", 5000))
         app.run(host='0.0.0.0', port=port)
