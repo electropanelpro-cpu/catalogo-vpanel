@@ -1,0 +1,12 @@
+name: Despertador de V-Panel
+on:
+  schedule:
+    - cron: '*/14 * * * *'  # Se ejecuta cada 14 minutos
+  workflow_dispatch:        # Permite ejecutarlo a mano para probar
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviando señal a Render
+        run: curl https://electropanelpro.onrender.com
