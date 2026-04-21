@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor Técnico - {{ proyecto.titulo }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        body { background-color: #0b1120; color: white; margin: 0; }
+        model-viewer { 
+            width: 100%; 
+            height: 60vh; 
+            background: radial-gradient(#1e293b, #0f172a);
+        }
+        .tech-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid #334155; }
+    </style>
+</head>
+<body class="p-4">
+    <div class="flex items-center mb-4">
+        <a href="/proyecto/{{ proyecto.id }}" class="text-blue-400 mr-4">← Volver</a>
+        <h1 class="text-lg font-bold truncate">{{ proyecto.titulo }}</h1>
+    </div>
+
+    <div class="rounded-2xl overflow-hidden border border-blue-500/30 mb-6 shadow-2xl shadow-blue-500/10 relative">
+        <model-viewer id="visor-cel" 
+            src="{{ url_for('static', filename='models/' + proyecto.archivo_3d) }}"
+            poster="/static/img/{{ proyecto.imagen }}"
+            camera-controls 
+            auto-rotate 
+            shadow-intensity="1" 
+            exposure="1"
+            ar
+            ar-modes="webxr scene-viewer quick-look">
+            
+            <div slot="poster" class="flex items-center justify-center h-full w-full bg-slate-900 text-slate-400 text-xs text-center p-10">
+                <div class="flex flex-col items-center">
+                    <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+                    Cargando diseño técnico 3D...
+                </div>
+            </div>
+        </model-viewer>
+    </div>
+
+    <div class="tech-card rounded-xl p-5 mb-6">
+        <h3 class="text-blue-400 text-sm font-bold mb-4 uppercase tracking-widest">Herramientas de Ingeniería</h3>
+        
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="document.getElementById('visor-cel').variantName = 'Transparent'" 
+                class="bg-slate-800 border border-slate-600 p-3 rounded-lg text-xs active:bg-blue-600 transition-colors">
+                🔍 MODO RAYOS X
+            </button>
+            <button onclick="document.getElementById('visor-cel').variantName = 'Default'" 
+                class="bg-slate-800 border border-slate-600 p-3 rounded-lg text-xs active:bg-blue-600 transition-colors">
+                🛠️ VISTA REAL
+            </button>
+        </div>
+
+        <div class="mt-6 border-t border-slate-700 pt-4">
+            <p class="text-xs text-slate-400 mb-2">Especificaciones técnicas:</p>
+            <ul class="text-sm space-y-2">
+                <li><span class="text-blue-300">Tensión:</span> {{ proyecto.tension }}</li>
+                <li><span class="text-blue-300">Grado IP:</span> {{ proyecto.ip }}</li>
+                <li><span class="text-blue-300">Material:</span> {{ proyecto.material }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <a href="https://wa.me/924254217?text=Hola, quiero cotizar el {{ proyecto.titulo }}" 
+       class="block w-full bg-green-600 text-center py-4 rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-transform">
+        💬 COTIZAR AHORA
+    </a>
+</body>
+</html>

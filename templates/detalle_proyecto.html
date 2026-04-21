@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    /* --- CONFIGURACIÓN DE PANTALLA COMPLETA --- */
+    .layout-detalles {
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        gap: 15px;
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 0 15px;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    /* --- PANELES LATERALES --- */
+    .panel-lateral {
+        flex: 1;
+        max-width: 350px;
+        min-width: 290px;
+        background: #111827;
+        border: 1px solid rgba(0, 242, 255, 0.2);
+        border-radius: 20px;
+        padding: 22px;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .panel-titulo {
+        color: #00f2ff;
+        font-size: 0.95rem;
+        font-weight: 800;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+        padding-bottom: 10px;
+    }
+
+    /* MONITOR TÉRMICO ANIMADO */
+    .monitor-box {
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 12px;
+        padding: 15px;
+        margin: 10px 0;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .onda-contenedor {
+        height: 20px; 
+        width: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+        margin-top: 10px;
+        border-radius: 4px;
+        border: 1px solid rgba(0, 242, 255, 0.2);
+    }
+
+    .onda-animada {
+        position: absolute;
+        width: 85%; 
+        height: 100%;
+        background: linear-gradient(90deg, #00f2ff, #005f66);
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
+        animation: pulso-carga 2s infinite ease-in-out;
+    }
+
+    @keyframes pulso-carga {
+        0% { opacity: 0.6; width: 80%; }
+        50% { opacity: 1; width: 85%; }
+        100% { opacity: 0.6; width: 80%; }
+    }
+
+    /* BOTONES DE ACCIÓN */
+    .btn-accion-tec {
+        background: rgba(0, 242, 255, 0.05);
+        border: 1px solid rgba(0, 242, 255, 0.2);
+        color: #00f2ff;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.3s;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: block;
+    }
+
+    .btn-accion-tec:hover {
+        background: #00f2ff;
+        color: #000;
+    }
+
+    /* LISTA DE MATERIALES DINÁMICA */
+    .item-bom {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .item-bom span { color: #00f2ff; font-weight: bold; }
+
+    /* TARJETA CENTRAL */
+    .card {
+        flex: 0 0 950px; 
+        background: #111827; 
+        border-radius: 20px; 
+        text-align: center;
+        color: white;
+        overflow: hidden; 
+        border: 1px solid rgba(0, 242, 255, 0.2);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .img-completa {
+        width: 100%; 
+        height: 400px; 
+        object-fit: contain; 
+        background: #0b1120;
+    }
+
+    /* MODAL CONFIGURACIÓN */
+    .modal-config {
+        display: none; position: fixed; z-index: 5000; left: 0; top: 0;
+        width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+        justify-content: center; align-items: center;
+    }
+    .modal-box { background: #111827; padding: 30px; border-radius: 20px; border: 1px solid #00f2ff; width: 400px; color: white; }
+
+    @media (max-width: 1550px) {
+        .panel-lateral { display: none; }
+        .card { flex: 0 0 950px; margin: 20px auto; }
+    }
+</style>
+
+<div class="layout-detalles">
+    
+    <div class="panel-lateral">
+        <div>
+            <div class="panel-titulo">🛡️ Diagnóstico IA</div>
+            <div style="font-family: monospace; font-size: 0.8rem; line-height: 1.8;">
+                <div>> ID PROYECTO: <span style="color:#00f2ff;">#00{{ proyecto.id }}</span></div>
+                <div>> TENSIÓN: <span style="color:#00f2ff;">{{ proyecto.tension }}</span></div>
+                <div>> PROTECCIÓN: <span style="color:#00f2ff;">{{ proyecto.ip }}</span></div>
+                <div>> MATERIAL: <span style="color:#00f2ff;">{{ proyecto.material }}</span></div>
+            </div>
+            
+            <div class="monitor-box">
+                <div style="font-size: 0.65rem; color: #9ca3af; text-transform: uppercase; display: flex; justify-content: space-between;">
+                    Análisis de Carga <span>85% NOMINAL</span>
+                </div>
+                <div class="onda-contenedor">
+                    <div class="onda-animada"></div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <a href="{{ url_for('descargar_plano', id=proyecto.id) }}" class="btn-accion-tec" target="_blank">📄 Ver Ficha Técnica</a>
+            <div class="btn-accion-tec" onclick="abrirConfig()" style="border-color: #6b7280; color: #9ca3af;">⚙️ Configuración</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <img src="{{ url_for('static', filename='img/' + proyecto.imagen) }}" class="img-completa">
+        <div class="info-proyecto" style="padding: 25px;">
+            <h1 style="font-size: 1.8rem; margin-bottom: 10px;">{{ proyecto.titulo }}</h1>
+            <p style="color: #9ca3af; font-size: 0.95rem;">{{ proyecto.descripcion }}</p>
+            <a href="{{ url_for('visor3d', id=proyecto.id) }}" class="btn-ver" style="display:inline-block; background:#00f2ff; color:black; padding: 15px; width:80%; border-radius:10px; text-decoration:none; font-weight:bold; margin-top:15px; text-transform: uppercase;">
+                🔷 VER MODELO 3D INTERACTIVO
+            </a>
+        </div>
+    </div>
+
+    <div class="panel-lateral">
+        <div>
+            <div class="panel-titulo">📋 Lista de Materiales</div>
+            {% for item in proyecto.componentes_json %}
+            <div class="item-bom">{{ item.nombre }} <span>{{ item.cant }}</span></div>
+            {% endfor %}
+        </div>
+
+        <div style="background: rgba(0, 242, 255, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0, 242, 255, 0.3);">
+            <div style="font-size: 0.65rem; color: #00f2ff; margin-bottom: 5px;">TIEMPO DE FABRICACIÓN</div>
+            <div style="font-size: 1.1rem; font-weight: bold; letter-spacing: 1px;">{{ proyecto.entrega }}</div>
+            <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 5px;">Validado por ElectroPanel Pro.</div>
+        </div>
+    </div>
+
+</div>
+
+<div id="modalConfig" class="modal-config">
+    <div class="modal-box">
+        <h3 style="color: #00f2ff; margin-bottom: 15px;">Personalizar #00{{ proyecto.id }}</h3>
+        <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 20px;">Selecciona especificaciones adicionales para tu cotización.</p>
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 0.8rem;">Marca preferida:</label>
+            <select style="width:100%; padding:10px; background:#0b1120; color:white; border:1px solid #00f2ff; border-radius:5px; margin-top:5px;">
+                <option>Schneider Electric</option>
+                <option>Siemens</option>
+                <option>ABB</option>
+            </select>
+        </div>
+        <button onclick="cerrarConfig()" class="btn-accion-tec" style="width:100%; background:#00f2ff; color:black;">Guardar Preferencias</button>
+    </div>
+</div>
+
+<script>
+    function abrirConfig() { document.getElementById('modalConfig').style.display = 'flex'; }
+    function cerrarConfig() { document.getElementById('modalConfig').style.display = 'none'; }
+</script>
+
+{% endblock %}

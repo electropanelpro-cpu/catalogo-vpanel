@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Panel Admin ⚡</h1>
+
+<form method="POST">
+    <input type="text" name="titulo" placeholder="Título" required><br><br>
+    <textarea name="descripcion" placeholder="Descripción" required></textarea><br><br>
+    <input type="text" name="imagen" placeholder="Ej: tablero1.jpg" required><br><br>
+    <button type="submit">Guardar Proyecto</button>
+</form>
+
+<hr>
+
+<h2>Proyectos actuales</h2>
+
+{% for p in proyectos %}
+<div class="card">
+    <h3>{{ p.titulo }}</h3>
+    <p>{{ p.descripcion }}</p>
+    <img src="{{ url_for('static', filename='img/' + p.imagen) }}" width="300">
+</div>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Asistente IA - V-Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Evita el scroll elástico y fija el alto real del dispositivo */
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            background-color: #0b1120; 
+            color: white; 
+            overflow: hidden; 
+        }
+
+        :root {
+            --bg-dark: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --accent-blue: #58a6ff;
+            --accent-green: #00ffcc; 
+        }
+
+        /* Contenedor principal */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: -webkit-fill-available;
+            padding-top: 75px; 
+        }
+
+        /* --- NAVBAR --- */
+        .navbar-mobile {
+            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid #1e293b;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 1000;
+        }
+
+        /* LOGO ESTILO INICIO (REDONDO Y CON BRILLO) */
+        .navbar-logo-small { 
+            height: 32px; 
+            width: 32px;
+            border-radius: 50%; 
+            border: 1.5px solid var(--accent-blue); 
+            box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+            object-fit: cover;
+            background: #0b1120;
+        }
+
+        /* --- MENÚ LATERAL --- */
+        .menu-overlay {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: rgba(11, 17, 32, 0.98); z-index: 2000; 
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; 
+            border-left: 1px solid #1e293b;
+        }
+        .menu-overlay.active { right: 0; }
+
+        .menu-links { display: flex; flex-direction: column; gap: 15px; margin-top: 50px; }
+        
+        .menu-item-btn {
+            background: #1e293b; border: 1px solid #334155;
+            border-radius: 12px; padding: 18px; color: white;
+            text-decoration: none; display: flex; align-items: center; gap: 15px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .menu-item-btn i { color: var(--accent-blue); width: 25px; }
+
+        /* Clase activa para que resalte en VERDE */
+        .menu-item-btn.active {
+            border-color: var(--accent-green) !important;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
+        }
+
+        /* Área de chat */
+        .chat-container { 
+            flex: 1; 
+            overflow-y: auto; 
+            scroll-behavior: smooth; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .bot-msg { background: #1e293b; border-bottom-left-radius: 2px; }
+        .user-msg { background: #3b82f6; border-bottom-right-radius: 2px; align-self: flex-end; }
+        
+        /* Área de entrada */
+        .input-area { 
+            background: #161e2e; 
+            border-top: 1px solid #334155; 
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-mobile">
+        <div class="flex items-center gap-2">
+            <img src="{{ url_for('static', filename='img/logo_vpanel.png') }}" class="navbar-logo-small">
+            <span class="text-white font-extrabold text-sm tracking-wide">ElectroPanel Pro</span>
+        </div>
+        <button id="openMenu" class="text-white text-2xl"><i class="fas fa-bars"></i></button>
+    </nav>
+
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="flex justify-between items-center">
+            <span class="text-[#58a6ff] font-mono text-xs">// SISTEMA</span>
+            <button id="closeMenu" class="text-white text-2xl"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="menu-links">
+            <a href="/" class="menu-item-btn"><i class="fas fa-home"></i> Inicio</a>
+            <a href="/servicios" class="menu-item-btn"><i class="fas fa-tools"></i> Servicios</a>
+            <a href="/proyectos" class="menu-item-btn"><i class="fas fa-project-diagram"></i> Proyectos</a>
+            <a href="/soporte" class="menu-item-btn active"><i class="fas fa-robot"></i> Soporte IA</a>
+            <a href="/contacto" class="menu-item-btn"><i class="fas fa-envelope"></i> Contacto</a>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+        <header class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50 backdrop-blur-md shrink-0">
+            <div class="flex items-center">
+                <div class="mr-3">
+                    <h1 class="text-sm font-bold">Asistente Técnico IA</h1>
+                    <p class="text-[10px] text-green-400 flex items-center">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-1"></span> EN LÍNEA
+                    </p>
+                </div>
+            </div>
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" class="w-8 h-8 opacity-80" alt="bot">
+        </header>
+
+        <main id="chat-box" class="chat-container p-4 flex flex-col space-y-4">
+            <div class="bot-msg p-3 rounded-2xl max-w-[85%] text-sm shadow-md border border-slate-700">
+                ¡Hola! Soy el experto de ElectroPanel Pro. ¿Qué duda técnica tienes sobre normativas o componentes hoy?
+            </div>
+        </main>
+
+        <div class="input-area p-4 shrink-0">
+            <div class="flex space-x-2">
+                <input type="text" id="userInput" 
+                    class="flex-1 bg-slate-800 border border-slate-700 rounded-full px-5 py-3 text-sm focus:outline-none focus:border-blue-500 text-white" 
+                    placeholder="Escribe tu consulta técnica..."
+                    autocomplete="off">
+                <button onclick="enviarMensaje()" class="bg-blue-600 p-3 rounded-full shadow-lg active:scale-90 transition-transform">
+                    <svg viewBox="0 0 24 24" class="w-5 h-5 fill-white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const openBtn = document.getElementById('openMenu');
+        const closeBtn = document.getElementById('closeMenu');
+        const menu = document.getElementById('menuOverlay');
+
+        openBtn.addEventListener('click', () => menu.classList.add('active'));
+        closeBtn.addEventListener('click', () => menu.classList.remove('active'));
+
+        async function enviarMensaje() {
+            const input = document.getElementById('userInput');
+            const box = document.getElementById('chat-box');
+            if (!input.value.trim()) return;
+
+            const userDiv = document.createElement('div');
+            userDiv.className = "user-msg p-3 rounded-2xl max-w-[85%] text-sm shadow-md";
+            userDiv.innerText = input.value;
+            box.appendChild(userDiv);
+
+            const texto = input.value;
+            input.value = "";
+            setTimeout(() => { box.scrollTop = box.scrollHeight; }, 10);
+
+            try {
+                const response = await fetch('/preguntar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({mensaje: texto})
+                });
+                const data = await response.json();
+
+                const botDiv = document.createElement('div');
+                botDiv.className = "bot-msg p-3 rounded-2xl max-w-[85%] text-sm shadow-md border border-slate-700";
+                botDiv.innerText = data.respuesta;
+                box.appendChild(botDiv);
+                box.scrollTop = box.scrollHeight;
+            } catch (e) {
+                console.error("Error en consulta");
+            }
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') enviarMensaje();
+        });
+
+        window.visualViewport.addEventListener('resize', () => {
+            document.body.style.height = window.visualViewport.height + 'px';
+            const box = document.getElementById('chat-box');
+            box.scrollTop = box.scrollHeight;
+        });
+    </script>
+</body>
+</html>

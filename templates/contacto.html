@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main-contacto" style="width: 100%; min-height: 90vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: #020617; box-sizing: border-box;">
+    
+    <div class="contacto-flex-wrapper" style="display: flex; gap: 40px; width: 98%; max-width: 1800px; background: #0f172a; padding: 60px; border-radius: 20px; border: 1px solid #1e293b; border-left: 6px solid #00ffcc; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+        
+        <div style="flex: 1.4;">
+            <p style="color: #64748b; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 3px; margin-bottom: 10px;">CONTÁCTANOS</p>
+            <h1 style="color: white; font-size: 3.2rem; font-weight: 800; margin-bottom: 15px; letter-spacing: -1px;">Solicita tu Cotización</h1>
+            <p style="color: #94a3b8; margin-bottom: 45px; font-size: 1.1rem; line-height: 1.7; max-width: 850px;">
+                Cuéntanos sobre tu proyecto. En ElectroPanel Pro diseñamos soluciones de ingeniería eléctrica a medida para distribución y control industrial adaptada a tu necesidades.
+            </p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="flash-message" style="padding: 20px; margin-bottom: 30px; border-radius: 12px; font-weight: 600; text-align: center; transition: opacity 0.8s ease;
+                              background: {{ 'rgba(0, 255, 204, 0.1)' if category == 'success' else 'rgba(255, 68, 68, 0.1)' }}; 
+                              color: {{ '#00ffcc' if category == 'success' else '#ff4444' }}; 
+                              border: 1px solid {{ '#00ffcc' if category == 'success' else '#ff4444' }};">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            
+            <form action="/contacto" method="POST" style="display: flex; flex-direction: column; gap: 25px;">
+                <div style="display: flex; gap: 20px;">
+                    <input type="text" name="Nombre" placeholder="Nombre completo" required style="flex: 1; padding: 20px; background: #020617; border: 1px solid #334155; border-radius: 12px; color: white; font-size: 1rem; outline: none; transition: 0.3s;">
+                    
+                    <input type="email" name="Email" placeholder="Correo electrónico" required style="flex: 1; padding: 20px; background: #020617; border: 1px solid #334155; border-radius: 12px; color: white; font-size: 1rem; outline: none; transition: 0.3s;">
+                </div>
+
+                <input type="text" name="Asunto" placeholder="Asunto del Proyecto (ej. TDF-01 o PLC Industrial)" required style="padding: 20px; background: #020617; border: 1px solid #334155; border-radius: 12px; color: white; font-size: 1rem; outline: none; transition: 0.3s;">
+                
+                <textarea name="Mensaje" placeholder="Describe los requerimientos técnicos..." rows="5" required style="padding: 20px; background: #020617; border: 1px solid #334155; border-radius: 12px; color: white; font-size: 1rem; outline: none; transition: 0.3s; resize: none;"></textarea>
+                
+                <button type="submit" class="btn-enviar-cian" style="align-self: flex-start; padding: 18px 50px; background: #00ffcc; border: none; border-radius: 10px; color: #020617; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1.5px;">
+                    ENVIAR MENSAJE
+                </button>
+            </form>
+        </div>
+        
+        <div style="flex: 0.6; display: flex; flex-direction: column; gap: 25px; justify-content: center;">
+            <div class="info-item" style="display: flex; align-items: center; gap: 20px; background: #111827; padding: 30px; border-radius: 12px; border: 1px solid #1f2937; border-left: 5px solid #00ffcc;">
+                <div style="width: 55px; height: 55px; min-width: 55px; background: rgba(0, 255, 204, 0.1); border-radius: 50%; border: 1px solid #00ffcc; display: flex; align-items: center; justify-content: center;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                </div>
+                <div>
+                    <p style="color: #64748b; font-size: 0.85rem; text-transform: uppercase; margin: 0; letter-spacing: 1px;">Teléfono</p>
+                    <p style="color: white; font-size: 1.2rem; font-weight: 600; margin: 5px 0 0 0;">+51 971-444-230</p>
+                </div>
+            </div>
+            
+            <div class="info-item" style="display: flex; align-items: center; gap: 20px; background: #111827; padding: 30px; border-radius: 12px; border: 1px solid #1f2937; border-left: 5px solid #00ffcc;">
+                <div style="width: 55px; height: 55px; min-width: 55px; background: rgba(0, 255, 204, 0.1); border-radius: 50%; border: 1px solid #00ffcc; display: flex; align-items: center; justify-content: center;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                </div>
+                <div>
+                    <p style="color: #64748b; font-size: 0.85rem; text-transform: uppercase; margin: 0; letter-spacing: 1px;">Email</p>
+                    <p style="color: white; font-size: 1.2rem; font-weight: 600; margin: 5px 0 0 0;">electropanelpro@gmail.com</p>
+                </div>
+            </div>
+            
+            <div class="info-item" style="display: flex; align-items: center; gap: 20px; background: #111827; padding: 30px; border-radius: 12px; border: 1px solid #1f2937; border-left: 5px solid #00ffcc;">
+                <div style="width: 55px; height: 55px; min-width: 55px; background: rgba(0, 255, 204, 0.1); border-radius: 50%; border: 1px solid #00ffcc; display: flex; align-items: center; justify-content: center;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ffcc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                </div>
+                <div>
+                    <p style="color: #64748b; font-size: 0.85rem; text-transform: uppercase; margin: 0; letter-spacing: 1px;">Ubicación</p>
+                    <p style="color: white; font-size: 1.2rem; font-weight: 600; margin: 5px 0 0 0;">Ciudad de Lima, Perú</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input:focus, textarea:focus {
+        border-color: #00ffcc !important;
+        box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);
+    }
+    
+    .btn-enviar-cian:hover {
+        background: #ffffff !important;
+        color: #020617 !important;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2);
+    }
+
+    .info-item {
+        transition: transform 0.3s;
+    }
+
+    .info-item:hover {
+        transform: scale(1.02);
+        border-color: #00ffcc !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+        flashMessages.forEach(function(msg) {
+            setTimeout(function() {
+                msg.style.opacity = '0'; // Inicia desvanecimiento
+                setTimeout(function() {
+                    msg.remove(); // Lo elimina del espacio después de 0.8s
+                }, 800);
+            }, 5000); // Espera 5 segundos antes de empezar a desaparecer
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block title %}Soporte IA - ElectroPanel Pro{% endblock %}
+
+{% block content %}
+<div style="min-height: 90vh; background: #0b1120; padding: 20px 40px; display: flex; justify-content: center; align-items: flex-start;">
+    
+    <div style="display: grid; grid-template-columns: 1fr 900px 1fr; gap: 30px; width: 100%; max-width: 1800px; align-items: stretch;">
+        
+        <div class="side-column">
+            <div class="panel-pro full-height">
+                <h3 class="panel-label">⚡ Caída de Tensión (CNE)</h3>
+                <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    <div class="gauge-box-large">
+                        <div id="gauge-needle" class="needle-large" style="transform: rotate(0deg); transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                    </div>
+                    <div class="display-value-large" id="volt-val">220.0V</div>
+                    <small style="color: #64748b; font-size: 0.8rem; margin-top: 5px;">TENSIÓN EN EL RECEPTOR</small>
+                </div>
+                
+                <div style="margin-top: 15px; background: #0b1120; padding: 15px; border-radius: 10px;">
+                    <label style="color: #94a3b8; font-size: 0.8rem; display: block; margin-bottom: 5px;">Longitud del alimentador:</label>
+                    <input type="range" id="dist-slider" min="1" max="150" value="10" oninput="calcularCaida()" style="width: 100%; accent-color: #00ffcc; cursor: pointer;">
+                    <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                        <span id="dist-val" style="color: white; font-size: 0.9rem;">10m</span>
+                        <span id="drop-percent" style="color: #00ffcc; font-size: 0.9rem; font-weight: bold;">0.0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-pro full-height" style="margin-top: 20px;">
+                <h3 class="panel-label">🔥 Simulador de Carga</h3>
+                <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-around;">
+                    <div>
+                        <input type="range" id="load-slider" min="0" max="63" value="16" oninput="calcularCaida()" style="width: 100%; accent-color: #00ffcc; cursor: pointer; height: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                            <span style="font-size: 0.95rem; color: #94a3b8;">Amperaje:</span>
+                            <span id="load-display" style="color: #00ffcc; font-size: 1.1rem; font-weight: bold;">16 A</span>
+                        </div>
+                        <div id="load-bar" style="height: 6px; background: #27c93f; margin-top: 10px; border-radius: 4px; transition: 0.4s;"></div>
+                    </div>
+
+                    <div style="background: #0b1120; padding: 12px; border-radius: 10px; border: 1px solid #1e293b;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px;">
+                            <span style="color: #94a3b8;">Potencia Estimada:</span>
+                            <span id="pwr-val" style="color: #ffbd2e;">3.5 kW</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                            <span style="color: #94a3b8;">Pérdida en Calor:</span>
+                            <span id="loss-val" style="color: #ff5f56;">12W</span>
+                        </div>
+                    </div>
+                </div>
+                <p id="load-msg" style="font-size: 0.8rem; color: #64748b; margin-top: 10px; text-align: center; border-top: 1px solid #1e293b; padding-top: 10px;">Carga nominal estable.</p>
+            </div>
+        </div>
+
+        <div style="width: 900px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: white; font-size: 2.5rem; font-weight: 800; margin-bottom: 5px;">Asistente Técnico IA ⚡</h1>
+                <p style="color: #94a3b8;">Consulta normativas CNE y soporte de ingeniería en tiempo real.</p>
+            </div>
+
+            <div style="background: #111827; border: 1px solid #1e293b; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 255, 204, 0.15);">
+                <div style="background: #1e293b; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 8px;">
+                        <div style="width: 12px; height: 12px; background: #ff5f56; border-radius: 50%;"></div>
+                        <div style="width: 12px; height: 12px; background: #ffbd2e; border-radius: 50%;"></div>
+                        <div style="width: 12px; height: 12px; background: #27c93f; border-radius: 50%;"></div>
+                    </div>
+                    <span style="color: #00ffcc; font-family: monospace; font-size: 0.85rem;">SYSTEM_ONLINE: V-PANEL_BOT_v0.1</span>
+                </div>
+
+                <div id="chat-window" style="height: 480px; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: #0b1120;">
+                    <div style="align-self: flex-start; background: #1e293b; color: #f1f5f9; padding: 15px 20px; border-radius: 0 18px 18px 18px; max-width: 80%; line-height: 1.5; border-left: 4px solid #00ffcc;">
+                        ¡Hola! Soy el asistente de <strong>ElectroPanel Pro</strong>. ¿Qué duda técnica tienes hoy?
+                    </div>
+                </div>
+
+                <div style="padding: 25px; background: #111827; border-top: 1px solid #1e293b; display: flex; gap: 15px;">
+                    <input type="text" id="user-query" placeholder="Escribe tu consulta aquí..."  
+                        style="flex: 1; background: #0b1120; border: 1px solid #1e293b; border-radius: 12px; padding: 15px 20px; color: white; outline: none; font-size: 1rem;">
+                    <button onclick="enviarMensaje()"  
+                        style="background: #00ffcc; color: #0f172a; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer;">
+                        CONSULTAR
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-column">
+            <div class="panel-pro full-height">
+                <h3 class="panel-label">📋 Selector de Conductor</h3>
+                <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    <select id="conductor-select" onchange="calcularCaida()" style="width: 100%; background: #0b1120; color: white; border: 1px solid #1e293b; padding: 12px; border-radius: 8px; font-size: 1rem; cursor: pointer;">
+                        <option value="2.5">2.5 mm²</option>
+                        <option value="4.0">4.0 mm²</option>
+                        <option value="6.0">6.0 mm²</option>
+                        <option value="10.0">10.0 mm²</option>
+                    </select>
+                    
+                    <div id="conductor-info" style="margin-top: 15px; background: #0b1120; padding: 18px; border-radius: 12px; border-left: 4px solid #00ffcc;">
+                        </div>
+                </div>
+            </div>
+
+            <div class="panel-pro full-height" style="margin-top: 20px;">
+                <h3 class="panel-label">📏 Espacio en Riel DIN</h3>
+                <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-around;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input type="number" id="poles" value="1" min="1" oninput="calcPoles()" style="width: 80px; background: #0b1120; border: 1px solid #1e293b; color: white; padding: 10px; border-radius: 8px; font-size: 1.1rem;">
+                        <span style="font-size: 0.95rem; color: #94a3b8;">Polos (18mm)</span>
+                    </div>
+                    
+                    <div style="padding: 15px; background: #0b1120; border-radius: 12px; font-family: monospace;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 8px;">
+                            <span style="color: #94a3b8;">Ocupación:</span>
+                            <span id="din-width" style="color: #00ffcc; font-weight: bold;">18mm</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 8px;">
+                            <span style="color: #94a3b8;">Reserva (20%):</span>
+                            <span style="color: #ffbd2e; font-weight: bold;">+4mm</span>
+                        </div>
+                        <div style="border-top: 1px solid #1e293b; padding-top: 8px; margin-top: 5px; display: flex; justify-content: space-between; font-size: 1rem;">
+                            <span style="color: white; font-weight: bold;">Total:</span>
+                            <span id="din-reserva" style="color: #00ffcc; font-weight: bold;">22mm</span>
+                        </div>
+                    </div>
+
+                    <div style="height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; display: flex;">
+                        <div id="din-bar-fill" style="width: 15%; background: #00ffcc; height: 100%; transition: 0.3s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .side-column { display: flex; flex-direction: column; justify-content: space-between; }
+    .panel-pro { 
+        background: #111827; 
+        border: 1px solid #1e293b; 
+        border-radius: 18px; 
+        padding: 25px; 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .panel-label { color: #00ffcc; font-size: 0.85rem; font-family: monospace; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 1px; border-bottom: 1px solid #1e293b; padding-bottom: 10px;}
+    .gauge-box-large { position: relative; width: 160px; height: 80px; border: 3px solid #1e293b; border-bottom: none; border-radius: 100px 100px 0 0; overflow: hidden; }
+    .needle-large { position: absolute; bottom: 0; left: 50%; width: 3px; height: 70px; background: #ff5f56; transform-origin: bottom; }
+    .display-value-large { color: white; font-family: monospace; font-size: 2rem; font-weight: bold; margin-top: 10px; }
+    @media (max-width: 1450px) { .side-column { display: none; } }
+</style>
+
+<script>
+    // LÓGICA DE INGENIERÍA: Caída de Tensión
+    function calcularCaida() {
+        const V_ORIGEN = 220;
+        const L = parseFloat(document.getElementById('dist-slider').value); 
+        const I = parseFloat(document.getElementById('load-slider').value); 
+        const S = parseFloat(document.getElementById('conductor-select').value); 
+        
+        const deltaV = (2 * 0.0172 * L * I) / S;
+        const vFinal = (V_ORIGEN - deltaV).toFixed(1);
+        const porcDrop = ((deltaV / V_ORIGEN) * 100).toFixed(1);
+
+        document.getElementById('dist-val').innerText = L + 'm';
+        document.getElementById('volt-val').innerText = vFinal + 'V';
+        document.getElementById('drop-percent').innerText = porcDrop + '%';
+        
+        const rotation = (vFinal - 220) * 2; 
+        document.getElementById('gauge-needle').style.transform = `rotate(${rotation}deg)`;
+        
+        document.getElementById('drop-percent').style.color = porcDrop > 3 ? "#ff5f56" : "#00ffcc";
+
+        document.getElementById('load-display').innerText = I + ' A';
+        document.getElementById('pwr-val').innerText = ((vFinal * I)/1000).toFixed(2) + ' kW';
+        document.getElementById('loss-val').innerText = (deltaV * I).toFixed(0) + 'W';
+
+        const bar = document.getElementById('load-bar');
+        const msg = document.getElementById('load-msg');
+        if(I < 32) { bar.style.background = "#27c93f"; msg.innerText = "Carga nominal estable."; }
+        else { bar.style.background = "#ff5f56"; msg.innerText = "Carga elevada - Revisar sección."; }
+
+        actualizarInfoConductor(S);
+    }
+
+    function actualizarInfoConductor(S) {
+        const db = { 
+            '2.5': ['21A', '2x16A', '20mm'], 
+            '4.0': ['28A', '2x20A', '20mm'], 
+            '6.0': ['36A', '2x32A', '25mm'], 
+            '10.0': ['50A', '2x40A', '25mm'] 
+        };
+        const data = db[S.toString()];
+        document.getElementById('conductor-info').innerHTML = `
+            <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Capacidad: <span style="color: white; font-weight: bold; float: right;">${data[0]}</span></div>
+            <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px;">Protección: <span style="color: white; font-weight: bold; float: right;">${data[1]}</span></div>
+            <div style="border-top: 1px solid #1e293b; margin: 10px 0; padding-top: 10px;">
+                <div style="font-size: 0.8rem; color: #64748b;">Ducto Sugerido: <span style="color: #00ffcc; float: right;">${data[2]} Ø</span></div>
+            </div>`;
+    }
+
+    function calcPoles() {
+        const p = document.getElementById('poles').value;
+        const width = p * 18;
+        const total = Math.ceil(width * 1.2);
+        document.getElementById('din-width').innerText = width + 'mm';
+        document.getElementById('din-reserva').innerText = total + 'mm';
+        const progress = Math.min((total / 240) * 100, 100);
+        document.getElementById('din-bar-fill').style.width = progress + '%';
+    }
+
+    // --- NUEVO: ESCUCHAR TECLA ENTER ---
+    document.getElementById('user-query').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            enviarMensaje();
+        }
+    });
+
+    calcularCaida();
+    calcPoles();
+
+    async function enviarMensaje() {
+        const input = document.getElementById('user-query');
+        const windowChat = document.getElementById('chat-window');
+        const text = input.value.trim();
+        if (!text) return;
+
+        const userDiv = document.createElement('div');
+        userDiv.style = "align-self: flex-end; background: #00ffcc; color: #0f172a; padding: 12px 20px; border-radius: 18px 18px 0 18px; max-width: 80%; font-weight: 700; margin-bottom: 10px;";
+        userDiv.textContent = text;
+        windowChat.appendChild(userDiv);
+        input.value = "";
+        windowChat.scrollTop = windowChat.scrollHeight;
+
+        const aiDiv = document.createElement('div');
+        aiDiv.style = "align-self: flex-start; background: #1e293b; color: #f1f5f9; padding: 15px 20px; border-radius: 0 18px 18px 18px; max-width: 80%; border-left: 4px solid #00ffcc;";
+        aiDiv.textContent = "Analizando...";
+        windowChat.appendChild(aiDiv);
+
+        try {
+            const response = await fetch('/preguntar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mensaje: text }) });
+            const data = await response.json();
+            aiDiv.innerHTML = data.respuesta;
+        } catch { aiDiv.textContent = "Error de conexión."; }
+        windowChat.scrollTop = windowChat.scrollHeight;
+    }
+</script>
+{% endblock %}

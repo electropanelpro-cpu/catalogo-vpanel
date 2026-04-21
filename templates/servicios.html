@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block title %}Ingeniería Industrial Elite | ElectroPanel Pro{% endblock %}
+
+{% block content %}
+
+<div style="width: 100%; min-height: 100vh; background: #020617; color: white; border-top: 1px solid #1e293b; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+    
+    <div style="width: 100%; padding: 120px 0 80px; text-align: center; background: radial-gradient(circle at center, #0b1120 0%, #020617 100%);">
+        <span style="color: #00ffcc; text-transform: uppercase; letter-spacing: 5px; font-size: 0.9rem; font-weight: 700;">Catálogo de Capacidades Técnicas</span>
+        <h1 style="color: white; font-size: 4rem; font-weight: 900; line-height: 1.1; margin: 25px 0;">Soluciones de <span style="color: #00ffcc;">Ingeniería Total</span></h1>
+        <p style="color: #94a3b8; max-width: 900px; margin: 0 auto; font-size: 1.3rem; line-height: 1.6; padding: 0 20px;">
+            Infraestructura eléctrica inteligente diseñada bajo estándares internacionales para procesos de alta criticidad.
+        </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; padding: 40px 20px; background: #020617; width: 100%; box-sizing: border-box;">
+        
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">⚡</div><h3>Diseño CAD/CAE 3D</h3></div>
+            <p>Modelado avanzado para optimización de espacios y flujos térmicos.</p>
+            <ul class="check-list"><li>Simulación CFD térmica.</li><li>Diagramas inteligentes.</li><li>Diseño de barras 3D.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">⚙️</div><h3>Manufactura CNC</h3></div>
+            <p>Envolventes metálicas de alta precisión con tecnología láser.</p>
+            <ul class="check-list"><li>Corte láser fibra.</li><li>Plegado robótico IP66.</li><li>Pintura epóxica al horno.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🌐</div><h3>Smart Panels & IoT</h3></div>
+            <p>Monitoreo remoto y digitalización de infraestructura.</p>
+            <ul class="check-list"><li>Protocolos Modbus/TCP.</li><li>Cloud Dashboards.</li><li>Alertas predictivas.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🛡️</div><h3>Pruebas FAT & Calidad</h3></div>
+            <p>Cumplimiento normativo mediante protocolos de rigor.</p>
+            <ul class="check-list"><li>Pruebas de aislamiento.</li><li>Verificación de torques.</li><li>Certificación IEC 61439.</li></ul>
+        </div>
+
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">📊</div><h3>Calidad de Energía</h3></div>
+            <p>Optimización del factor de potencia y filtros de armónicos.</p>
+            <ul class="check-list"><li>Bancos automáticos.</li><li>Filtros activos.</li><li>Auditorías Clase A.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🔄</div><h3>Retrofitting Industrial</h3></div>
+            <p>Modernización de tableros legacy sin interrumpir operación.</p>
+            <ul class="check-list"><li>Cambio de interruptores.</li><li>Migración a PLC.</li><li>Ampliación de capacidad.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">❄️</div><h3>Gestión Térmica</h3></div>
+            <p>Control climático para prolongar vida útil de componentes.</p>
+            <ul class="check-list"><li>Refrigeración activa.</li><li>Ventilación filtrada G4.</li><li>Resistencias calefactoras.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🛠️</div><h3>Soporte Técnico 24/7</h3></div>
+            <p>Acompañamiento post-entrega y stock de repuestos.</p>
+            <ul class="check-list"><li>Mantenimiento correctivo.</li><li>Termografía in-situ.</li><li>Contratos preventivos.</li></ul>
+        </div>
+
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🔒</div><h3>Ciberseguridad OT</h3></div>
+            <p>Protección de redes de control contra intrusions.</p>
+            <ul class="check-list"><li>Firewalls industriales.</li><li>VLANs segregadas.</li><li>Acceso VPN seguro.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">⛈️</div><h3>Protección Transitorios</h3></div>
+            <p>Supresión de picos de voltaje y descargas.</p>
+            <ul class="check-list"><li>SPDs Clase I+II.</li><li>Puesta a tierra técnica.</li><li>Aislamiento de señal.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🏗️</div><h3>Centros de Control</h3></div>
+            <p>Gestión centralizada de motores (CCM) modulares.</p>
+            <ul class="check-list"><li>Arrancadores suaves.</li><li>Variadores de frecuencia.</li><li>Unidades extraíbles.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">📋</div><h3>Consultoría Técnica</h3></div>
+            <p>Asesoría para cumplimiento de normativas locales.</p>
+            <ul class="check-list"><li>Expedientes INDECI.</li><li>Estudios Arc Flash.</li><li>Levantamientos CNE.</li></ul>
+        </div>
+
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🔋</div><h3>Sistemas UPS & Respaldo</h3></div>
+            <p>Continuidad absoluta para cargas críticas de control.</p>
+            <ul class="check-list"><li>Sistemas On-line.</li><li>Bancos de baterías.</li><li>Bypass de mantenimiento.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">💡</div><h3>Iluminación Industrial</h3></div>
+            <p>Sistemas de control lumínico para grandes naves.</p>
+            <ul class="check-list"><li>Integración DALI/KNX.</li><li>Sensores de presencia.</li><li>Ahorro medible.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">📉</div><h3>Análisis de Redes</h3></div>
+            <p>Diagnóstico profundo de salud eléctrica del sistema.</p>
+            <ul class="check-list"><li>Registro de transitorios.</li><li>Medición de flicker.</li><li>Informes técnicos.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🏗️</div><h3>Subestaciones</h3></div>
+            <p>Diseño y equipamiento de celdas de media tensión.</p>
+            <ul class="check-list"><li>Celdas de remonte.</li><li>Transformadores secos.</li><li>Protecciones primarias.</li></ul>
+        </div>
+
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🧪</div><h3>Laboratorio Móvil</h3></div>
+            <p>Servicios de diagnóstico en sitio con equipos certificados.</p>
+            <ul class="check-list"><li>Inyección de corriente.</li><li>Pruebas de relés.</li><li>Medición de aislamiento.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🚀</div><h3>Automatización</h3></div>
+            <p>Sistemas SCADA y arquitecturas redundantes.</p>
+            <ul class="check-list"><li>Programación PACs.</li><li>Redundancia Hot-Standby.</li><li>Redes Industriales.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">📜</div><h3>Certificación Retie</h3></div>
+            <p>Gestión integral para validación de instalaciones.</p>
+            <ul class="check-list"><li>Protocolos de inspección.</li><li>Planos as-built.</li><li>Cumplimiento legal.</li></ul>
+        </div>
+        <div class="elite-panel-card">
+            <div class="card-header-flex"><div class="icon-box">🌱</div><h3>Energías Renovables</h3></div>
+            <p>Integración de sistemas fotovoltaicos industriales.</p>
+            <ul class="check-list"><li>Inversores de red.</li><li>Sistemas On-grid.</li><li>Monitoreo de ahorro.</li></ul>
+        </div>
+    </div>
+
+    <div style="width: 100%; padding: 100px 0; background: #020617; text-align: center;">
+        <h2 style="font-size: 3rem; font-weight: 800; margin-bottom: 60px;">Nuestro Proceso <span style="color: #00ffcc;">Certificado</span></h2>
+        
+        <div class="process-full-grid">
+            <div class="process-card"><span class="process-num">01</span><h3>Consultoría</h3><p>Análisis de carga crítica y levantamiento técnico en campo.</p></div>
+            <div class="process-card"><span class="process-num">02</span><h3>Diseño CAD</h3><p>Desarrollo de planos de fuerza y diagramas unifilares avanzados.</p></div>
+            <div class="process-card"><span class="process-num">03</span><h3>Integración</h3><p>Ensamblaje de precisión con componentes de marcas líderes.</p></div>
+            <div class="process-card"><span class="process-num">04</span><h3>Certificación</h3><p>Pruebas FAT y entrega de protocolos de inyección de corriente.</p></div>
+            
+            <div class="process-card"><span class="process-num">05</span><h3>Logística Especializada</h3><p>Transporte y maniobras con equipos de izaje certificados.</p></div>
+            <div class="process-card"><span class="process-num">06</span><h3>Montaje en Sitio</h3><p>Anclaje, interconexión de barras y cableado de control.</p></div>
+            <div class="process-card"><span class="process-num">07</span><h3>Puesta en Marcha</h3><p>Pruebas dinámicas de operación y transferencia de carga.</p></div>
+            <div class="process-card"><span class="process-num">08</span><h3>Capacitación</h3><p>Entrenamiento técnico para personal de mantenimiento.</p></div>
+
+            <div class="process-card"><span class="process-num">09</span><h3>Monitoreo Post-Venta</h3><p>Seguimiento de parámetros en las primeras horas de uso.</p></div>
+            <div class="process-card"><span class="process-num">10</span><h3>Gestión Documental</h3><p>Entrega de dossiers de calidad y certificados de conformidad.</p></div>
+            <div class="process-card"><span class="process-num">11</span><h3>Mantenimiento Planificado</h3><p>Programación de revisiones preventivas semestrales.</p></div>
+            <div class="process-card"><span class="process-num">12</span><h3>Optimización Continua</h3><p>Ajustes de eficiencia basados en el análisis de datos.</p></div>
+        </div>
+    </div>
+
+    <div style="width: 100%; padding: 80px 20px; background: #0b1120; box-sizing: border-box;">
+        <h2 style="color: white; font-size: 2.2rem; font-weight: 800; margin-bottom: 50px;">Proyectos de <span style="color: #00ffcc;">Alto Impacto</span></h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+            <div class="project-card" style="background-image: url('{{ url_for('static', filename='img/proyecto1.jpg') }}');">
+                <div class="project-overlay">
+                    <span style="color: #00ffcc; font-weight: 700;">MINERÍA</span>
+                    <h3>CCM Inteligente 4.16kV</h3>
+                    <p>Sistemas de bombeo con variadores de frecuencia.</p>
+                </div>
+            </div>
+            <div class="project-card" style="background-image: url('{{ url_for('static', filename='img/proyecto2.jpg') }}');">
+                <div class="project-overlay">
+                    <span style="color: #00ffcc; font-weight: 700;">DATA CENTER</span>
+                    <h3>Respaldo Crítico N+1</h3>
+                    <p>Tableros de transferencia automática de alta disponibilidad.</p>
+                </div>
+            </div>
+            <div class="project-card" style="background-image: url('{{ url_for('static', filename='img/proyecto3.jpg') }}');">
+                <div class="project-overlay">
+                    <span style="color: #00ffcc; font-weight: 700;">INDUSTRIA</span>
+                    <h3>Automatización SCADA</h3>
+                    <p>Modernización de línea de producción con telemetría IoT.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="width: 100%; padding: 100px 20px; background: #020617; text-align: center; box-sizing: border-box;">
+        <div style="width: 100%; margin: 0 auto; padding: 80px 40px; background: linear-gradient(135deg, #0f172a 0%, #020617 100%); border: 1px solid #1e293b; border-radius: 40px; box-sizing: border-box;">
+            <h2 style="color: white; font-size: 3rem; font-weight: 900; margin-bottom: 25px;">¿Listo para elevar sus estándares?</h2>
+            <p style="color: #94a3b8; font-size: 1.3rem; margin-bottom: 45px;">Transformamos requerimientos técnicos en activos industriales de alta rentabilidad.</p>
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ url_for('contacto') }}" class="btn-primary">Solicitar Cotización Técnica</a>
+                <a href="#" class="btn-secondary">Descargar Brochure PDF</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* RESET PARA PANTALLA COMPLETA */
+    * { box-sizing: border-box; }
+
+    .elite-panel-card {
+        background: #0b1120;
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid #1e293b;
+        border-right: 6px solid #00ffcc;
+        transition: 0.3s;
+    }
+
+    .elite-panel-card:hover { transform: translateY(-5px); border-color: #00ffcc; }
+    .card-header-flex { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+    .icon-box { color: #00ffcc; font-size: 1.2rem; }
+    .elite-panel-card h3 { color: white; margin: 0; font-size: 1.1rem; font-weight: 800; }
+    .elite-panel-card p { color: #94a3b8; font-size: 0.9rem; margin: 0; line-height: 1.4; }
+    .check-list { list-style: none; padding: 0; margin-top: 10px; font-size: 0.8rem; color: #64748b; }
+    .check-list li::before { content: "•"; color: #00ffcc; margin-right: 8px; }
+
+    /* GRID PROCESO PANTALLA COMPLETA */
+    .process-full-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0px; 
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    @media (max-width: 1200px) { .process-full-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .process-full-grid { grid-template-columns: 1fr; } }
+
+    .process-card {
+        background: #0b1120;
+        padding: 60px 40px;
+        border: 1px solid #1e293b;
+        text-align: left;
+        transition: 0.3s;
+        position: relative;
+        border-radius: 15px;
+        margin: 10px; 
+    }
+
+    .process-card:hover { background: #0f172a; border-color: #00ffcc; box-shadow: inset 0 0 0 1px #00ffcc; }
+    .process-num { font-size: 3rem; font-weight: 900; color: rgba(0, 255, 204, 0.1); position: absolute; top: 20px; right: 20px; }
+    .process-card h3 { color: white; font-size: 1.5rem; margin-bottom: 15px; }
+    .process-card p { color: #94a3b8; line-height: 1.6; margin: 0; }
+
+    /* PROYECTOS */
+    .project-card { 
+        height: 400px; 
+        border-radius: 30px; 
+        background-size: cover; 
+        background-position: center; 
+        position: relative; 
+        overflow: hidden; 
+        border: 1px solid #1e293b;
+        border-right: 6px solid #00ffcc; /* LÍNEA CIAN DERECHA AÑADIDA */
+    }
+    .project-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; background: linear-gradient(transparent, rgba(2, 6, 23, 0.95)); }
+
+    /* BOTONES */
+    .btn-primary { background: #00ffcc; color: #020617; padding: 18px 35px; border-radius: 12px; font-weight: 800; text-decoration: none; display: inline-block; }
+    .btn-secondary { color: white; border: 2px solid #1e293b; padding: 18px 35px; border-radius: 12px; font-weight: 800; text-decoration: none; display: inline-block; }
+</style>
+
+{% endblock %}

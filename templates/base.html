@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <style>
+
+        /* Desplazamiento suave al hacer clic en los enlaces */
+
+        html {
+
+            scroll-behavior: smooth;
+
+        }
+
+        
+
+        /* Estilo para resaltar el botón de IA */
+
+        .nav-ia {
+
+            color: #00ffcc !important;
+
+            font-weight: 800 !important;
+
+            border: 1px solid rgba(0, 255, 204, 0.3);
+
+            padding: 5px 12px;
+
+            border-radius: 8px;
+
+            transition: 0.3s;
+
+        }
+
+        
+
+        .nav-ia:hover {
+
+            background: rgba(0, 255, 204, 0.1);
+
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+<nav class="navbar">
+
+    <h2>⚡ ElectroPanel Pro</h2>
+
+    <div>
+
+        <a href="/">Inicio</a>
+
+        <a href="/servicios">Servicios</a>
+
+        <a href="/proyectos">Proyectos</a>
+
+        <a href="/soporte" class="nav-ia">Soporte IA</a>
+
+        <a href="/contacto">Contacto</a>
+
+    </div>
+
+</nav>
+
+
+
+{% block content %}{% endblock %}
+
+
+
+<footer>
+
+    <p>© 2026 Ingeniería Eléctrica</p>
+
+</footer>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Catálogo Técnico | V-Panel Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --accent-blue: #58a6ff;
+            --accent-green: #00ffcc; 
+            --tech-gray: #8b949e;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: #c9d1d9; 
+            font-family: 'Inter', sans-serif;
+            padding-top: 80px; 
+            padding-bottom: 50px;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar-mobile {
+            position: fixed; top: 0; left: 0; width: 100%; height: 75px;
+            background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 1000;
+        }
+
+        /* LOGO ESTILO INICIO (REDONDO Y CON BRILLO) */
+        .navbar-logo-small { 
+            height: 32px; 
+            width: 32px;
+            border-radius: 50%; 
+            border: 1.5px solid var(--accent-blue); 
+            box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+            object-fit: cover;
+            background: var(--bg-dark);
+        }
+
+        /* --- MENÚ LATERAL --- */
+        .menu-overlay {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: rgba(13, 17, 23, 0.98); z-index: 2000; 
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; 
+            border-left: 1px solid var(--border-color);
+        }
+        .menu-overlay.active { right: 0; }
+
+        .menu-links { display: flex; flex-direction: column; gap: 15px; margin-top: 50px; }
+        
+        .menu-item-btn {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 18px; color: white;
+            text-decoration: none; display: flex; align-items: center; gap: 15px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .menu-item-btn i { color: var(--accent-blue); width: 25px; }
+
+        /* CLASE ACTIVA EN VERDE AGUAMARINA */
+        .menu-item-btn.active {
+            border-color: var(--accent-green) !important;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
+        }
+
+        /* Cabecera Interna */
+        .section-header-inner { padding: 10px 20px 20px 20px; }
+        .btn-back {
+            color: var(--accent-blue); text-decoration: none;
+            font-family: 'Roboto Mono', monospace; font-size: 0.75rem;
+            display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        /* Tarjeta de Proyecto */
+        .project-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 16px; margin-bottom: 25px; overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .img-container { position: relative; width: 100%; height: 240px; background: #000; overflow: hidden; }
+        .img-project { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+
+        .badge-tension {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(13, 17, 23, 0.9); border: 1px solid var(--accent-blue);
+            color: var(--accent-blue); padding: 5px 12px; border-radius: 8px;
+            font-family: 'Roboto Mono', monospace; font-size: 0.7rem; font-weight: 700; z-index: 2;
+        }
+
+        .project-info { padding: 22px; }
+        .project-info h3 { font-size: 1.2rem; font-weight: 700; color: #ffffff; margin-bottom: 12px; line-height: 1.2; }
+
+        .tech-specs {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; margin: 18px 0; padding: 15px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .spec-item { font-size: 0.75rem; color: var(--tech-gray); display: flex; align-items: center; }
+        .spec-item i { color: var(--accent-blue); width: 20px; font-size: 0.8rem; }
+
+        .btn-details {
+            background: #21262d; color: #ffffff; border: 1px solid var(--border-color);
+            width: 100%; padding: 14px; border-radius: 10px;
+            font-weight: 700; font-size: 0.85rem; text-decoration: none;
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; text-transform: uppercase;
+        }
+
+        .counter-label {
+            font-family: 'Roboto Mono', monospace; font-size: 0.7rem; color: #484f58;
+            text-align: center; display: block; margin: 30px 0; letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-mobile">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="{{ url_for('static', filename='img/logo_vpanel.png') }}" class="navbar-logo-small">
+            <span style="color: white; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px;">ElectroPanel Pro</span>
+        </div>
+        <button id="openMenu" class="btn text-white" style="font-size: 1.5rem;"><i class="fas fa-bars"></i></button>
+    </nav>
+
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="d-flex justify-content-between align-items-center">
+            <span style="color: var(--accent-blue); font-family: 'Roboto Mono'; font-size: 0.8rem;">// SISTEMA</span>
+            <button id="closeMenu" class="btn text-white" style="font-size: 1.5rem;"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="menu-links">
+            <a href="/" class="menu-item-btn"><i class="fas fa-home"></i> Inicio</a>
+            <a href="/servicios" class="menu-item-btn"><i class="fas fa-tools"></i> Servicios</a>
+            <a href="/proyectos" class="menu-item-btn active"><i class="fas fa-project-diagram"></i> Proyectos</a>
+            <a href="/soporte" class="menu-item-btn"><i class="fas fa-robot"></i> Soporte IA</a>
+            <a href="/contacto" class="menu-item-btn"><i class="fas fa-envelope"></i> Contacto</a>
+        </div>
+    </div>
+
+    <div class="section-header-inner">
+        <a href="/" class="btn-back"><i class="fas fa-chevron-left"></i> SYSTEM_PANEL</a>
+        <h2 class="h4 mb-0 fw-bold text-white">CATÁLOGO TÉCNICO</h2>
+        <p class="small text-secondary mb-0">Unidades de Potencia y Control Certificadas</p>
+    </div>
+
+    <div class="container mt-2 px-4">
+        {% for p in proyectos %}
+        <div class="project-card shadow">
+            <div class="img-container">
+                <img src="{{ url_for('static', filename='img/' + p.imagen) }}" class="img-project" alt="{{ p.titulo }}">
+                <span class="badge-tension"><i class="fas fa-bolt me-1"></i> {{ p.tension }}</span>
+            </div>
+            
+            <div class="project-info">
+                <h3>{{ p.titulo }}</h3>
+                
+                <div class="tech-specs">
+                    <div class="spec-item"><i class="fas fa-microchip"></i> {{ p.ip }}</div>
+                    <div class="spec-item"><i class="fas fa-layer-group"></i> {{ p.material }}</div>
+                    <div class="spec-item"><i class="fas fa-truck-fast"></i> {{ p.entrega }}</div>
+                    <div class="spec-item"><i class="fas fa-certificate"></i> NORMA CNE</div>
+                </div>
+
+                <a href="/proyecto/{{ p.id }}" class="btn-details">
+                    DATOS TÉCNICOS <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <span class="counter-label">// TOTAL_REGISTROS: {{ proyectos|length }} UNITS</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        const openBtn = document.getElementById('openMenu');
+        const closeBtn = document.getElementById('closeMenu');
+        const menu = document.getElementById('menuOverlay');
+
+        openBtn.addEventListener('click', () => menu.classList.add('active'));
+        closeBtn.addEventListener('click', () => menu.classList.remove('active'));
+    </script>
+</body>
+</html>
