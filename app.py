@@ -233,14 +233,10 @@ def ver_proyecto(id):
     except Exception as e:
         return f"Error al cargar el proyecto: {str(e)}", 500
 
-# FUNCIÓN NUEVA QUE FALTABA PARA EVITAR EL ERROR DE LA IMAGEN
-@app.route('/descargar_plano/<int:id>')
-def descargar_plano(id):
-    flash("Iniciando descarga de planos técnicos...", "success")
-    return redirect(url_for('ver_proyecto', id=id))
-
+# RUTA PARA EL VISOR 3D (Maneja ambos nombres posibles en el HTML)
+@app.route('/proyecto/<int:id>/visor')
 @app.route('/proyecto/<int:id>/visor-tecnico')
-def visor3d_tecnico(id):
+def visor3d(id):
     try:
         proyecto = Proyecto.query.get_or_404(id)
         if es_celular():
@@ -248,6 +244,13 @@ def visor3d_tecnico(id):
         return render_template('visor3d.html', proyecto=proyecto)
     except Exception as e:
         return f"Error interno: {str(e)}", 500
+
+# RUTA PARA DESCARGAS (Evita errores si el HTML usa 'descargar_plano')
+@app.route('/descargar_plano/<int:id>')
+@app.route('/descargar/<int:id>')
+def descargar_plano(id):
+    flash("Iniciando descarga de planos técnicos...", "success")
+    return redirect(url_for('ver_proyecto', id=id))
 
 @app.route('/preguntar', methods=['POST'])
 def preguntar():
