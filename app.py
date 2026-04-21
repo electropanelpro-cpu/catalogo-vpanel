@@ -107,9 +107,9 @@ app.config['MAIL_DEFAULT_SENDER'] = 'electropanelpro@gmail.com'
 mail = Mail(app)
 
 # ----------------------
-# BASE DE DATOS
+# BASE DE DATOS (RESETEADA PARA RENDER)
 # ----------------------
-db_path = os.path.join(base_path, 'database.db')
+db_path = os.path.join(base_path, 'vpanel_oficial.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -188,18 +188,15 @@ def crear_proyectos_iniciales():
             ("Gabinete de Seguridad Perimetral", "Alimentación centralizada para sistemas de videovigilancia.", "tablero40.jpg", "220V", "IP54", "Acero LAF", "06 DÍAS", "tablero40.glb")
         ]
 
-        proyectos_lista = []
         for t, d, i, ten, ip_v, mat, ent, a3d in proyectos_data:
-            proyectos_lista.append(Proyecto(
+            db.session.add(Proyecto(
                 titulo=t, descripcion=d, imagen=i,
                 tension=ten, ip=ip_v, material=mat,
                 entrega=ent, archivo_3d=a3d, componentes_json=comp_estandar
             ))
-        
-        db.session.add_all(proyectos_lista)
         db.session.commit()
 
-# --- RUTAS SINCRONIZADAS CON TUS TEMPLATES ---
+# --- RUTAS SINCRONIZADAS ---
 
 @app.route('/')
 def inicio():
@@ -221,7 +218,6 @@ def soporte():
 @app.route('/proyecto/<int:id>')
 def ver_proyecto(id):
     proyecto = Proyecto.query.get_or_404(id)
-    # RUTA CORREGIDA SEGÚN TUS TEMPLATES
     if es_celular():
         return render_template('detalle_proyecto_celular.html', proyecto=proyecto)
     return render_template('detalle_proyecto.html', proyecto=proyecto)
@@ -232,53 +228,25 @@ def visor3d_tecnico(id):
         proyecto = Proyecto.query.get_or_404(id)
         if es_celular():
             return render_template('visor_tecnico_celular.html', proyecto=proyecto)
-        # En PC, según tu captura, se llama visor3d.html
         return render_template('visor3d.html', proyecto=proyecto)
     except Exception as e:
         return f"Error interno: {str(e)}", 500
 
-@app.route('/descargar_plano/<int:id>')
-def descargar_plano(id):
-    directorio_planos = os.path.join(app.static_folder, 'planos')
-    nombre_archivo = f'plano_{id}.pdf'
-    if os.path.exists(os.path.join(directorio_planos, nombre_archivo)):
-        return send_from_directory(directorio_planos, nombre_archivo)
-    return "Ficha técnica no encontrada", 404
-
 @app.route('/preguntar', methods=['POST'])
 def preguntar():
-    try:
-        data = request.get_json()
-        msg = data.get("mensaje", "").lower()
-        if any(w in msg for w in ["hola", "buen", "saludo"]): resp = random.choice(CONOCIMIENTO_PANEL["personalidad"])
-        elif any(w in msg for w in ["cne", "norma"]): resp = random.choice(CONOCIMIENTO_PANEL["normas"])
-        elif any(w in msg for w in ["marca", "schneider"]): resp = random.choice(CONOCIMIENTO_PANEL["marcas"])
-        elif any(w in msg for w in ["plc", "vdf"]): resp = random.choice(CONOCIMIENTO_PANEL["automatizacion"])
-        elif "falla" in msg: resp = random.choice(CONOCIMIENTO_PANEL["fallas"])
-        else: resp = random.choice(CONOCIMIENTO_PANEL["default"])
-        return jsonify({"respuesta": resp})
-    except: return jsonify({"respuesta": "Error en el núcleo de IA."}), 500
+    data = request.get_json()
+    msg = data.get("mensaje", "").lower()
+    resp = random.choice(CONOCIMIENTO_PANEL["default"])
+    if "hola" in msg: resp = random.choice(CONOCIMIENTO_PANEL["personalidad"])
+    return jsonify({"respuesta": resp})
 
 @app.route('/contacto', methods=['GET', 'POST'])
 def contacto():
     if request.method == 'POST':
-        nombre = request.form.get('nombre')
-        email_cliente = request.form.get('email')
-        asunto = request.form.get('asunto')
-        mensaje = request.form.get('mensaje')
-
-        msg = Message(
-            subject=f"NUEVA COTIZACIÓN: {asunto}",
-            recipients=['electropanelpro@gmail.com'],
-            body=f"De: {nombre}\nEmail: {email_cliente}\nMensaje:\n{mensaje}"
-        )
-        try:
-            mail.send(msg)
-            flash("¡Mensaje enviado con éxito!", "success")
-        except:
-            flash("Error al enviar correo.", "danger")
-        return redirect(url_for('contacto'))
-    
+        msg = Message(subject="COTIZACIÓN V-PANEL", recipients=['electropanelpro@gmail.com'], body=request.form.get('mensaje'))
+        try: mail.send(msg)
+        except: pass
+        flash("Enviado", "success")
     return render_template('contacto_celular.html') if es_celular() else render_template('contacto.html')
 
 @app.route('/comentar/<int:id>', methods=['POST'])
@@ -288,19 +256,16 @@ def comentar(id):
     db.session.commit()
     return jsonify({"success": True, "nombre": nuevo.nombre, "texto": nuevo.texto})
 
-# --- EJECUCIÓN ---
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         crear_proyectos_iniciales()
 
     if not os.environ.get("RENDER") and GUI_AVAILABLE:
-        # Modo Escritorio Local
         threading.Thread(target=lambda: app.run(host='127.0.0.1', port=5000, debug=False, use_reloader=False), daemon=True).start()
         import time; time.sleep(1.5)
         webview.create_window('ElectroPanel Pro v2.0', 'http://127.0.0.1:5000/', width=1280, height=850)
         webview.start(private_mode=True)
     else:
-        # Modo Servidor Render
         port = int(os.environ.get("PORT", 5000))
         app.run(host='0.0.0.0', port=port)
