@@ -107,7 +107,7 @@ app.config['MAIL_DEFAULT_SENDER'] = 'electropanelpro@gmail.com'
 mail = Mail(app)
 
 # ----------------------
-# BASE DE DATOS (RESETEADA CON NUEVO NOMBRE)
+# BASE DE DATOS
 # ----------------------
 db_path = os.path.join(base_path, 'vpanel_master.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
