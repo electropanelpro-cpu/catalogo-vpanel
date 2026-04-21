@@ -77,7 +77,7 @@
             margin-bottom: 20px; object-fit: cover;
         }
 
-        .solutions-title, .quality-title, .sedes-title {
+        .solutions-title, .quality-title, .sedes-title, .tech-title {
             color: #ffffff; font-size: 1.5rem; font-weight: 800;
             text-align: center; margin: 40px 0 25px 0; letter-spacing: 1px;
         }
@@ -108,6 +108,31 @@
             color: var(--accent-blue); padding: 5px 12px; border-radius: 8px;
             font-size: 0.7rem; text-decoration: none; backdrop-filter: blur(4px); font-weight: 600;
         }
+
+        /* --- NUEVA SECCIÓN CNC MÓVIL --- */
+        .video-box-mobile {
+            border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color);
+            aspect-ratio: 16/9; background: #000; position: relative; margin-bottom: 20px;
+        }
+        .tech-badge-mobile {
+            background: var(--card-bg); padding: 5px 10px; border-radius: 6px;
+            font-family: 'Roboto Mono', monospace; font-size: 0.65rem; color: #fff;
+            border: 1px solid var(--border-color); display: inline-flex; align-items: center;
+            margin-top: -10px; position: relative; z-index: 5; margin-left: 15px;
+        }
+        .pulse-dot { height: 6px; width: 6px; background: var(--accent-green); border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .tech-mini-card-mobile {
+            background: var(--card-bg); padding: 15px; border-radius: 12px;
+            border: 1px solid var(--border-color); margin-bottom: 12px;
+        }
+        .tech-mini-card-mobile h4 { color: var(--accent-green); font-size: 0.9rem; margin-bottom: 5px; font-weight: 700; }
+        .tech-mini-card-mobile p { font-size: 0.75rem; color: #8b949e; margin: 0; line-height: 1.4; }
+
+        .clean-list-mobile { list-style: none; padding: 0; margin-top: 15px; }
+        .clean-list-mobile li { font-size: 0.75rem; color: #c9d1d9; margin-bottom: 8px; display: flex; align-items: center; }
+        .clean-list-mobile li::before { content: "✓"; color: var(--accent-green); font-weight: bold; margin-right: 10px; }
 
         .btn-whatsapp-footer { 
             background: var(--whatsapp-green); color: white; padding: 16px;
@@ -232,8 +257,8 @@
                 <p>Calle Emeterio Pérez 310, SMP, Lima 15102</p>
             </div>
             <div class="map-container-mobile">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.761763784534!2d-77.0543666!3d-12.0593!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8c50c000001%3A0x7d6a5c!2zQ2FsbGUgTHVpcyBDYXJyYW56YSAyMTc0LCBMaW1hIDE1MDgx!5e0!3m2!1ses!2spe!4v1" allowfullscreen="" loading="lazy"></iframe>
-                <a href="https://maps.app.goo.gl/eFczzj8dm8zTPYdc6" target="_blank" class="btn-maps-mobile">VER EN MAPS</a>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3902.138407338575!2d-77.0652234!3d-12.0163351!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105cf65c87140e1%3A0xc3464a9386d52671!2sCalle%20Eleuterio%20Perez%20310%2C%20San%20Mart%C3%ADn%20de%20Porres%2015102!5e0!3m2!1ses-419!2spe!4v1712850000000!5m2!1ses-419!2spe" allowfullscreen="" loading="lazy"></iframe>
+                <a href="https://maps.app.goo.gl/..." target="_blank" class="btn-maps-mobile">VER EN MAPS</a>
             </div>
         </div>
 
@@ -243,9 +268,41 @@
                 <p>Calle Luis Carranza 2174, Lima 15081</p>
             </div>
             <div class="map-container-mobile">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3902.5!2d-77.06!3d-12.01!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105cf!2sC.%20Emeterio%20P%C3%A9rez%20310%2C%20San%20Mart%C3%ADn%20de%20Porres%2015102!5e0!3m2!1ses-419!2spe!4v1710000000001" allowfullscreen="" loading="lazy"></iframe>
-                <a href="https://maps.app.goo.gl/TVSJ6F1oyKZmYHCj8" target="_blank" class="btn-maps-mobile">VER EN MAPS</a>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.815340632514!2d-77.0543216!3d-12.0467554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8d6d6d6d6d7%3A0x6d6d6d6d6d6d6d6d!2sCalle%20Luis%20Carranza%202174%2C%20Lima%2015081!5e0!3m2!1ses-419!2spe!4v1712850000000!5m2!1ses-419!2spe" allowfullscreen="" loading="lazy"></iframe>
+                <a href="https://maps.app.goo.gl/..." target="_blank" class="btn-maps-mobile">VER EN MAPS</a>
             </div>
+        </div>
+
+        <h2 class="tech-title">Corte Láser CNC</h2>
+        
+        <div class="video-box-mobile">
+            <video id="maquinaVideoCel" autoplay muted loop playsinline controls style="width: 100%; height: 100%; object-fit: cover;">
+                <source src="{{ url_for('static', filename='videos/maquinaria.mp4') }}" type="video/mp4">
+            </video>
+        </div>
+        <div class="tech-badge-mobile">
+            <span class="pulse-dot"></span> CNC PRECISION: ±0.05MM
+        </div>
+
+        <div class="mt-4">
+            <div class="tech-mini-card-mobile" style="border-left: 3px solid var(--accent-green);">
+                <h4>Alta Potencia en Fibra</h4>
+                <p>Tecnología de última generación para cortes sin rebabas y ensamblajes exactos.</p>
+            </div>
+            <div class="tech-mini-card-mobile">
+                <h4>Plegado Robótico</h4>
+                <p>Aseguramos la estanqueidad grado IP65 con ángulos de precisión.</p>
+            </div>
+            <div class="tech-mini-card-mobile">
+                <h4>Integración Directa</h4>
+                <p>Sincronización total desde SolidWorks a nuestra línea de manufactura.</p>
+            </div>
+            
+            <ul class="clean-list-mobile">
+                <li>Normativa IEC 61439</li>
+                <li>Pintura epóxica al horno</li>
+                <li>Diseño modular escalable</li>
+            </ul>
         </div>
 
         <a href="https://wa.me/51971444230" class="btn-whatsapp-footer">
