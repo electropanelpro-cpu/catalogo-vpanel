@@ -209,6 +209,10 @@ def servicios():
 @app.route('/proyectos')
 def proyectos():
     try:
+        # MODIFICACIÓN DE SEGURIDAD: Fuerza la creación antes de consultar
+        db.create_all()
+        crear_proyectos_iniciales()
+        
         proyectos_data = Proyecto.query.all()
         if es_celular():
             return render_template('proyectos_celular.html', proyectos=proyectos_data)
