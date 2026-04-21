@@ -225,27 +225,37 @@ def soporte():
 @app.route('/proyecto/<int:id>')
 def ver_proyecto(id):
     try:
-        db.create_all()
-        proyecto = Proyecto.query.get_or_404(id)
+        db.create_all() # Asegura que la tabla existe antes de buscar
+        proyecto = Proyecto.query.get(id)
+        if not proyecto:
+            crear_proyectos_iniciales()
+            proyecto = Proyecto.query.get_or_404(id)
+            
         if es_celular():
             return render_template('detalle_proyecto_celular.html', proyecto=proyecto)
         return render_template('detalle_proyecto.html', proyecto=proyecto)
     except Exception as e:
-        return f"Error al cargar el proyecto: {str(e)}", 500
+        # En lugar de 500, intentamos reparar y reintentar
+        db.create_all()
+        crear_proyectos_iniciales()
+        return redirect(url_for('proyectos'))
 
-# RUTA PARA EL VISOR 3D (Maneja ambos nombres posibles en el HTML)
 @app.route('/proyecto/<int:id>/visor')
 @app.route('/proyecto/<int:id>/visor-tecnico')
 def visor3d(id):
     try:
-        proyecto = Proyecto.query.get_or_404(id)
+        proyecto = Proyecto.query.get(id)
+        if not proyecto:
+            db.create_all()
+            crear_proyectos_iniciales()
+            proyecto = Proyecto.query.get_or_404(id)
+            
         if es_celular():
             return render_template('visor_tecnico_celular.html', proyecto=proyecto)
         return render_template('visor3d.html', proyecto=proyecto)
     except Exception as e:
-        return f"Error interno: {str(e)}", 500
+        return redirect(url_for('proyectos'))
 
-# RUTA PARA DESCARGAS (Evita errores si el HTML usa 'descargar_plano')
 @app.route('/descargar_plano/<int:id>')
 @app.route('/descargar/<int:id>')
 def descargar_plano(id):
@@ -271,10 +281,13 @@ def contacto():
 
 @app.route('/comentar/<int:id>', methods=['POST'])
 def comentar(id):
-    nuevo = Comentario(nombre=request.form['nombre'], texto=request.form['texto'], proyecto_id=id)
-    db.session.add(nuevo)
-    db.session.commit()
-    return jsonify({"success": True, "nombre": nuevo.nombre, "texto": nuevo.texto})
+    try:
+        nuevo = Comentario(nombre=request.form['nombre'], texto=request.form['texto'], proyecto_id=id)
+        db.session.add(nuevo)
+        db.session.commit()
+        return jsonify({"success": True, "nombre": nuevo.nombre, "texto": nuevo.texto})
+    except:
+        return jsonify({"success": False})
 
 if __name__ == '__main__':
     with app.app_context():
