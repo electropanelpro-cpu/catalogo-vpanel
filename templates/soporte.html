@@ -3,7 +3,7 @@
 {% block title %}Soporte IA - ElectroPanel Pro{% endblock %}
 
 {% block content %}
-<div style="min-height: 90vh; background: #0b1120; padding: 20px 40px; display: flex; justify-content: center; align-items: flex-start;">
+<div style="min-height: 90vh; background: #020617; padding: 20px 40px; display: flex; justify-content: center; align-items: flex-start;">
     
     <div style="display: grid; grid-template-columns: 1fr 900px 1fr; gap: 30px; width: 100%; max-width: 1800px; align-items: stretch;">
         
@@ -18,7 +18,7 @@
                     <small style="color: #64748b; font-size: 0.8rem; margin-top: 5px;">TENSIÓN EN EL RECEPTOR</small>
                 </div>
                 
-                <div style="margin-top: 15px; background: #0b1120; padding: 15px; border-radius: 10px;">
+                <div style="margin-top: 15px; background: #020617; padding: 15px; border-radius: 10px; border: 1px solid #1e293b;">
                     <label style="color: #94a3b8; font-size: 0.8rem; display: block; margin-bottom: 5px;">Longitud del alimentador:</label>
                     <input type="range" id="dist-slider" min="1" max="150" value="10" oninput="calcularCaida()" style="width: 100%; accent-color: #00ffcc; cursor: pointer;">
                     <div style="display: flex; justify-content: space-between; margin-top: 5px;">
@@ -40,7 +40,7 @@
                         <div id="load-bar" style="height: 6px; background: #27c93f; margin-top: 10px; border-radius: 4px; transition: 0.4s;"></div>
                     </div>
 
-                    <div style="background: #0b1120; padding: 12px; border-radius: 10px; border: 1px solid #1e293b;">
+                    <div style="background: #020617; padding: 12px; border-radius: 10px; border: 1px solid #1e293b;">
                         <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px;">
                             <span style="color: #94a3b8;">Potencia Estimada:</span>
                             <span id="pwr-val" style="color: #ffbd2e;">3.5 kW</span>
@@ -61,7 +61,7 @@
                 <p style="color: #94a3b8;">Consulta normativas CNE y soporte de ingeniería en tiempo real.</p>
             </div>
 
-            <div style="background: #111827; border: 1px solid #1e293b; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 255, 204, 0.15);">
+            <div style="background: #0b1120; border: 1px solid #1e293b; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 255, 204, 0.15);">
                 <div style="background: #1e293b; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;">
                     <div style="display: flex; gap: 8px;">
                         <div style="width: 12px; height: 12px; background: #ff5f56; border-radius: 50%;"></div>
@@ -71,17 +71,18 @@
                     <span style="color: #00ffcc; font-family: monospace; font-size: 0.85rem;">SYSTEM_ONLINE: V-PANEL_BOT_v0.1</span>
                 </div>
 
-                <div id="chat-window" style="height: 480px; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: #0b1120;">
+                <div id="chat-window" style="height: 480px; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; background: #020617;">
                     <div style="align-self: flex-start; background: #1e293b; color: #f1f5f9; padding: 15px 20px; border-radius: 0 18px 18px 18px; max-width: 80%; line-height: 1.5; border-left: 4px solid #00ffcc;">
                         ¡Hola! Soy el asistente de <strong>ElectroPanel Pro</strong>. ¿Qué duda técnica tienes hoy?
                     </div>
                 </div>
 
-                <div style="padding: 25px; background: #111827; border-top: 1px solid #1e293b; display: flex; gap: 15px;">
+                <div style="padding: 25px; background: #0b1120; border-top: 1px solid #1e293b; display: flex; gap: 15px;">
                     <input type="text" id="user-query" placeholder="Escribe tu consulta aquí..."  
-                        style="flex: 1; background: #0b1120; border: 1px solid #1e293b; border-radius: 12px; padding: 15px 20px; color: white; outline: none; font-size: 1rem;">
+                        style="flex: 1; background: #020617; border: 1px solid #1e293b; border-radius: 12px; padding: 15px 20px; color: white; outline: none; font-size: 1rem; transition: 0.3s;"
+                        onfocus="this.style.borderColor='#00ffcc'">
                     <button onclick="enviarMensaje()"  
-                        style="background: #00ffcc; color: #0f172a; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer;">
+                        style="background: #00ffcc; color: #020617; border: none; padding: 0 30px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;">
                         CONSULTAR
                     </button>
                 </div>
@@ -92,15 +93,15 @@
             <div class="panel-pro full-height">
                 <h3 class="panel-label">📋 Selector de Conductor</h3>
                 <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
-                    <select id="conductor-select" onchange="calcularCaida()" style="width: 100%; background: #0b1120; color: white; border: 1px solid #1e293b; padding: 12px; border-radius: 8px; font-size: 1rem; cursor: pointer;">
+                    <select id="conductor-select" onchange="calcularCaida()" style="width: 100%; background: #020617; color: white; border: 1px solid #1e293b; padding: 12px; border-radius: 8px; font-size: 1rem; cursor: pointer; outline: none;">
                         <option value="2.5">2.5 mm²</option>
                         <option value="4.0">4.0 mm²</option>
                         <option value="6.0">6.0 mm²</option>
                         <option value="10.0">10.0 mm²</option>
                     </select>
                     
-                    <div id="conductor-info" style="margin-top: 15px; background: #0b1120; padding: 18px; border-radius: 12px; border-left: 4px solid #00ffcc;">
-                        </div>
+                    <div id="conductor-info" style="margin-top: 15px; background: #020617; padding: 18px; border-radius: 12px; border-left: 4px solid #00ffcc; border-top: 1px solid #1e293b; border-right: 1px solid #1e293b; border-bottom: 1px solid #1e293b;">
+                    </div>
                 </div>
             </div>
 
@@ -108,11 +109,11 @@
                 <h3 class="panel-label">📏 Espacio en Riel DIN</h3>
                 <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-around;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <input type="number" id="poles" value="1" min="1" oninput="calcPoles()" style="width: 80px; background: #0b1120; border: 1px solid #1e293b; color: white; padding: 10px; border-radius: 8px; font-size: 1.1rem;">
+                        <input type="number" id="poles" value="1" min="1" oninput="calcPoles()" style="width: 80px; background: #020617; border: 1px solid #1e293b; color: white; padding: 10px; border-radius: 8px; font-size: 1.1rem; outline: none;">
                         <span style="font-size: 0.95rem; color: #94a3b8;">Polos (18mm)</span>
                     </div>
                     
-                    <div style="padding: 15px; background: #0b1120; border-radius: 12px; font-family: monospace;">
+                    <div style="padding: 15px; background: #020617; border-radius: 12px; font-family: monospace; border: 1px solid #1e293b;">
                         <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 8px;">
                             <span style="color: #94a3b8;">Ocupación:</span>
                             <span id="din-width" style="color: #00ffcc; font-weight: bold;">18mm</span>
@@ -139,7 +140,7 @@
 <style>
     .side-column { display: flex; flex-direction: column; justify-content: space-between; }
     .panel-pro { 
-        background: #111827; 
+        background: #0b1120; 
         border: 1px solid #1e293b; 
         border-radius: 18px; 
         padding: 25px; 
@@ -153,6 +154,11 @@
     .needle-large { position: absolute; bottom: 0; left: 50%; width: 3px; height: 70px; background: #ff5f56; transform-origin: bottom; }
     .display-value-large { color: white; font-family: monospace; font-size: 2rem; font-weight: bold; margin-top: 10px; }
     @media (max-width: 1450px) { .side-column { display: none; } }
+    
+    button:hover {
+        background: #ffffff !important;
+        transform: translateY(-2px);
+    }
 </style>
 
 <script>
@@ -214,7 +220,6 @@
         document.getElementById('din-bar-fill').style.width = progress + '%';
     }
 
-    // --- NUEVO: ESCUCHAR TECLA ENTER ---
     document.getElementById('user-query').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             enviarMensaje();
@@ -231,7 +236,7 @@
         if (!text) return;
 
         const userDiv = document.createElement('div');
-        userDiv.style = "align-self: flex-end; background: #00ffcc; color: #0f172a; padding: 12px 20px; border-radius: 18px 18px 0 18px; max-width: 80%; font-weight: 700; margin-bottom: 10px;";
+        userDiv.style = "align-self: flex-end; background: #00ffcc; color: #020617; padding: 12px 20px; border-radius: 18px 18px 0 18px; max-width: 80%; font-weight: 700; margin-bottom: 10px;";
         userDiv.textContent = text;
         windowChat.appendChild(userDiv);
         input.value = "";

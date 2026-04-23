@@ -3,147 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Contacto | V-Panel Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <title>Contacto | ElectroPanel Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-dark: #020617; /* Azul Noche unificado */
+            --bg-dark: #020617;
             --card-bg: #0b1120;
             --border-color: #1e293b;
-            --accent-blue: #00ffcc; /* Cian Eléctrico */
-            --accent-green: #00ffcc;
+            --accent-blue: #00ffcc;
+            --text-gray: #94a3b8;
         }
 
         body { 
             background-color: var(--bg-dark); 
-            color: #c9d1d9; 
+            color: #f8fafc; 
             font-family: 'Inter', sans-serif;
-            padding-top: 85px; 
+            padding-top: 90px; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* --- NAVBAR --- */
         .navbar-mobile {
             position: fixed; top: 0; left: 0; width: 100%; height: 75px;
-            background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px);
+            background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; z-index: 1000;
         }
 
         .navbar-logo-small { 
-            height: 32px; width: 32px;
+            height: 35px; width: 35px;
             border-radius: 50%; 
             border: 1.5px solid var(--accent-blue); 
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
             object-fit: cover;
-            background: var(--bg-dark);
         }
 
         /* --- MENÚ LATERAL --- */
         .menu-overlay {
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
             background: rgba(2, 6, 23, 0.98); z-index: 2000; 
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; 
-            border-left: 1px solid var(--border-color);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 40px 30px; 
         }
         .menu-overlay.active { right: 0; }
 
-        .menu-links { display: flex; flex-direction: column; gap: 15px; margin-top: 50px; }
+        .menu-links { display: flex; flex-direction: column; gap: 12px; margin-top: 40px; }
         
         .menu-item-btn {
             background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 18px; color: white;
+            border-radius: 14px; padding: 16px 20px; color: white;
             text-decoration: none; display: flex; align-items: center; gap: 15px;
-            font-weight: 600; transition: 0.3s;
+            font-weight: 500; font-size: 1.05rem; transition: 0.2s;
         }
-        .menu-item-btn i { color: var(--accent-blue); width: 25px; }
+        .menu-item-btn i { color: var(--accent-blue); font-size: 1.1rem; width: 24px; text-align: center; }
 
         .menu-item-btn.active {
-            border-color: var(--accent-green) !important;
-            background: rgba(0, 255, 204, 0.05);
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+            border-color: var(--accent-blue) !important;
+            background: rgba(0, 255, 204, 0.08);
+            font-weight: 700;
         }
 
-        /* --- FORMULARIO INDUSTRIAL --- */
+        /* --- FORMULARIO --- */
         .form-section {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
+            border-radius: 24px;
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
         .form-label-custom {
-            color: var(--accent-blue); font-family: 'Roboto Mono', monospace;
-            font-size: 0.7rem; text-transform: uppercase; margin-bottom: 8px; display: block;
-            letter-spacing: 1px;
+            color: var(--accent-blue); 
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.72rem; 
+            font-weight: 700;
+            text-transform: uppercase; 
+            margin-bottom: 8px; 
+            display: block;
+            letter-spacing: 1.2px;
         }
 
         .form-control-custom {
-            width: 100%; background: #020617; border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 15px; color: white; margin-bottom: 15px; font-size: 0.9rem;
-            transition: 0.3s;
+            width: 100%; 
+            background: #020617; 
+            border: 1px solid var(--border-color);
+            border-radius: 12px; 
+            padding: 14px 16px; 
+            color: white; 
+            margin-bottom: 18px; 
+            font-size: 1rem; /* Evita zoom automático en iOS */
+            transition: 0.3s ease;
         }
 
+        .form-control-custom::placeholder { color: #475569; font-size: 0.9rem; }
+
         .form-control-custom:focus { 
-            border-color: var(--accent-green); 
+            border-color: var(--accent-blue); 
             outline: none; 
-            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1); 
+            box-shadow: 0 0 0 3px rgba(0, 255, 204, 0.1); 
         }
 
         .btn-submit {
-            width: 100%; background: var(--accent-green); color: #020617; border: none;
-            padding: 18px; border-radius: 12px; font-weight: 800; text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
-            transition: 0.3s; margin-top: 10px;
+            width: 100%; background: var(--accent-blue); color: #020617; border: none;
+            padding: 16px; border-radius: 14px; font-weight: 800; font-size: 0.95rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.3s; margin-top: 5px;
         }
-        .btn-submit:active { transform: scale(0.98); }
 
-        /* --- TARJETAS DE INFO UNIFICADAS --- */
+        /* --- INFO CARDS --- */
         .info-card-center {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-left: 4px solid var(--accent-blue);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
         }
 
         .icon-circle {
-            width: 50px; height: 50px; 
-            background: rgba(0, 255, 204, 0.1);
+            width: 46px; height: 46px; 
+            background: rgba(0, 255, 204, 0.05);
             border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; color: var(--accent-blue);
-            border: 1px solid rgba(0, 255, 204, 0.2);
+            font-size: 1.1rem; color: var(--accent-blue);
+            border: 1px solid rgba(0, 255, 204, 0.15);
             flex-shrink: 0;
         }
 
-        .info-label { color: #8b949e; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; display: block; font-family: 'Roboto Mono'; }
-        .info-value { color: white; font-weight: 700; font-size: 0.95rem; display: block; }
+        .info-label { color: var(--text-gray); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-family: 'Roboto Mono'; margin-bottom: 2px; display: block;}
+        .info-value { color: white; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.3px; }
 
-        footer { padding: 40px 20px; font-family: 'Roboto Mono', monospace; font-size: 0.7rem; text-align: center; color: #484f58; }
+        footer { padding: 40px 20px; font-family: 'Roboto Mono', monospace; font-size: 0.75rem; text-align: center; color: #475569; line-height: 1.6; }
     </style>
 </head>
 <body>
 
     <nav class="navbar-mobile">
-        <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
             <img src="{{ url_for('static', filename='img/logo_vpanel.png') }}" class="navbar-logo-small">
-            <span style="color: white; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px;">ElectroPanel Pro</span>
+            <span style="color: white; font-weight: 800; font-size: 1rem; letter-spacing: -0.2px;">ElectroPanel Pro</span>
         </div>
-        <button id="openMenu" class="btn text-white" style="font-size: 1.5rem;"><i class="fas fa-bars"></i></button>
+        <button id="openMenu" class="btn text-white p-0" style="font-size: 1.6rem;"><i class="fas fa-align-right"></i></button>
     </nav>
 
     <div class="menu-overlay" id="menuOverlay">
         <div class="d-flex justify-content-between align-items-center">
-            <span style="color: var(--accent-blue); font-family: 'Roboto Mono'; font-size: 0.8rem;">// CONTACT_SYSTEM</span>
-            <button id="closeMenu" class="btn text-white" style="font-size: 1.5rem;"><i class="fas fa-times"></i></button>
+            <span style="color: var(--accent-blue); font-family: 'Roboto Mono'; font-size: 0.85rem; font-weight: 700;">// MENU_SYSTEM</span>
+            <button id="closeMenu" class="btn text-white p-0" style="font-size: 1.8rem;"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="menu-links">
@@ -157,23 +170,23 @@
 
     <div class="container px-4">
         <div class="mb-4">
-            <span style="font-family: 'Roboto Mono'; color: var(--accent-blue); font-size: 0.7rem; letter-spacing: 2px;">// REQUEST_QUOTE</span>
-            <h2 style="font-weight: 800; color: white; margin-top: 5px;">CONTACTO <span style="color: var(--accent-green);">TÉCNICO</span></h2>
+            <span style="font-family: 'Roboto Mono'; color: var(--accent-blue); font-size: 0.75rem; font-weight: 600; letter-spacing: 2px;">// REQUEST_QUOTE</span>
+            <h2 style="font-weight: 800; color: white; margin-top: 5px; font-size: 1.8rem; letter-spacing: -0.5px;">CONTACTO <span style="color: var(--accent-blue);">TÉCNICO</span></h2>
         </div>
 
-        <div class="form-section shadow-lg">
+        <div class="form-section">
             <form action="/contacto" method="POST">
                 <label class="form-label-custom">Nombre Completo</label>
-                <input type="text" class="form-control-custom" name="nombre" placeholder="Nombre completo..." required>
+                <input type="text" class="form-control-custom" name="nombre" placeholder="Tu nombre..." required>
 
                 <label class="form-label-custom">Email de Contacto</label>
                 <input type="email" class="form-control-custom" name="email" placeholder="ejemplo@correo.com" required>
 
                 <label class="form-label-custom">Referencia de Proyecto</label>
-                <input type="text" class="form-control-custom" name="asunto" placeholder="Ej. Tablero TDF-01 o Automatización">
+                <input type="text" class="form-control-custom" name="asunto" placeholder="Ej. Tablero TDF-01">
 
                 <label class="form-label-custom">Especificaciones Técnicas</label>
-                <textarea class="form-control-custom" name="mensaje" rows="4" placeholder="Describa brevemente los requerimientos del tablero o servicio..."></textarea>
+                <textarea class="form-control-custom" name="mensaje" rows="4" placeholder="Detalles del requerimiento..."></textarea>
 
                 <button type="submit" class="btn-submit">ENVIAR REQUERIMIENTO <i class="fas fa-paper-plane ms-2"></i></button>
             </form>
@@ -205,8 +218,8 @@
     </div>
 
     <footer>
-        &lt; ElectroPanel Pro S.A.C /&gt;<br>
-        <span style="opacity: 0.5;">LIMA_REGION_HQ © 2026</span>
+        <div style="margin-bottom: 5px; color: #94a3b8; font-weight: 700;">&lt; ElectroPanel Pro S.A.C /&gt;</div>
+        <span style="opacity: 0.6;">LIMA_REGION_HQ © 2026</span>
     </footer>
 
     <script>
