@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-<div style="display: flex; flex-direction: row; gap: 20px; width: 100%; min-height: 80vh; padding: 10px; box-sizing: border-box;">
+<div style="display: flex; flex-direction: row; gap: 20px; width: 100%; min-height: 80vh; padding: 10px; box-sizing: border-box; background: #020617;">
 
     <div class="card" style="flex: 3; margin: 0; position: relative; min-width: 0; background: #0f172a; border-radius: 12px; overflow: hidden; border: 1px solid #334155;">
         <h1 style="font-size: 1.5rem; margin: 15px; color: white; position: relative; z-index: 5;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
@@ -15,21 +16,21 @@
             <div class="view-dropdown">
                 <button title="Vistas Estándar"><i class="fas fa-desktop"></i> <i class="fas fa-caret-down" style="font-size: 0.6rem;"></i></button>
                 <div class="dropdown-content">
-                    <a href="#" onclick="setView('0deg 90deg auto')">Vista Frontal</a>
-                    <a href="#" onclick="setView('90deg 90deg auto')">Vista Lateral</a>
-                    <a href="#" onclick="setView('0deg 0deg auto')">Vista Superior</a>
-                    <a href="#" onclick="setView('45deg 45deg auto')">Vista Isométrica</a>
+                    <a href="javascript:void(0)" onclick="setView('0deg 90deg auto')">Vista Frontal</a>
+                    <a href="javascript:void(0)" onclick="setView('90deg 90deg auto')">Vista Lateral</a>
+                    <a href="javascript:void(0)" onclick="setView('0deg 0deg auto')">Vista Superior</a>
+                    <a href="javascript:void(0)" onclick="setView('45deg 45deg auto')">Vista Isométrica</a>
                 </div>
             </div>
 
-            <div style="width: 1px; background: #999; margin: 5px 2px;"></div> <button onclick="toggleFullscreen()" title="Pantalla Completa"><i class="fas fa-expand"></i></button>
+            <div style="width: 1px; background: #999; margin: 5px 2px;"></div> 
+            <button onclick="toggleFullscreen()" title="Pantalla Completa"><i class="fas fa-expand"></i></button>
         </div>
 
         <model-viewer
             id="visor-pro"
             src="{{ url_for('static', filename='models/' ~ proyecto.imagen.replace('.jpg', '.glb')) }}"
             alt="Modelo 3D"
-            auto-rotate
             camera-controls
             interaction-prompt="none"
             exposure="1"
@@ -39,8 +40,8 @@
     </div>
 
     <div class="card" style="flex: 1; margin: 0; min-width: 280px; display: flex; flex-direction: column; border-left: 3px solid #00ffcc; background: #020617;">
-        <h3 style="color: #00ffcc; font-size: 1.1rem; margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #334155;">📦 Lista de Piezas</h3>
-        <div id="lista-piezas" style="flex-grow: 1; overflow-y: auto; max-height: 600px; padding-right: 5px;">
+        <h3 style="color: #00ffcc; font-size: 1.1rem; margin-top: 0; padding: 15px; border-bottom: 1px solid #334155;">📦 Lista de Piezas</h3>
+        <div id="lista-piezas" style="flex-grow: 1; overflow-y: auto; max-height: 600px; padding: 10px;">
             <p style="font-size: 0.85rem; color: #64748b; text-align: center; margin-top: 20px;">Identificando componentes...</p>
         </div>
     </div>
@@ -59,7 +60,7 @@
     const menu = document.querySelector("#menu-contextual-3d");
     let piezaActualIndex = null;
 
-    // --- FUNCIONES DE LA TOOLBAR (eDrawings) ---
+    // --- CONTROLES DE TOOLBAR ---
     window.resetCamera = () => {
         modelViewer.cameraOrbit = '0deg 75deg auto';
         modelViewer.fieldOfView = 'auto';
@@ -74,12 +75,12 @@
 
     window.zoomIn = () => {
         const fov = parseFloat(modelViewer.fieldOfView.replace('deg', '')) || 45;
-        modelViewer.fieldOfView = `${Math.max(10, fov - 10)}deg`;
+        modelViewer.fieldOfView = `${Math.max(10, fov - 8)}deg`;
     };
 
     window.zoomOut = () => {
         const fov = parseFloat(modelViewer.fieldOfView.replace('deg', '')) || 45;
-        modelViewer.fieldOfView = `${Math.min(80, fov + 10)}deg`;
+        modelViewer.fieldOfView = `${Math.min(80, fov + 8)}deg`;
     };
 
     window.toggleFullscreen = () => {
@@ -90,10 +91,10 @@
         }
     };
 
-    // --- LÓGICA EXISTENTE ---
+    // --- LÓGICA DE PIEZAS ---
     const bibliotecaModelos = {
-        'tablero2': { 'color': 'Gabinete Principal (Naranja)', 'color.001': 'Panel de Montaje Interno', 'color.002': 'Soporte de Base', 'color.006': 'Estructura de Puerta', 'white medium gloss plastic': 'Aisladores de Conexión', 'white medium gloss plastic.001': 'Canaletas PVC', 'color-13': 'Interruptor Termomagnético', 'color-14': 'Borneras de Tierra', 'color-4.007': 'Riel DIN Metálico', 'color-16': 'Carcasa de PLC', 'color-17': 'Módulos de Entrada/Salida', 'color-18': 'Cableado de Control' },
-        'tablero1': { 'color.064': 'Estructura Principal TDF', 'color-30.022': 'Placa de Montaje Posterior', 'color-30.023': 'Soporte de Interruptores', 'color-30.016': 'Barra de Cobre Principal', 'color-30.020': 'Aislador de Barra', 'color-30.017': 'Puerta Frontal TDF', 'color-30.021': 'Marco de Seguridad', 'color-30.018': 'Bisagra Reforzada', 'color-30.019': 'Manija con Llave', 'color-12.089': 'Interruptor General', 'color-12.085': 'Borneras de Salida', 'color-12.097': 'Canaleta de Cables' }
+        'tablero2': { 'color': 'Gabinete Principal', 'color.001': 'Panel de Montaje', 'color.13': 'Interruptor Termomagnético', 'color-4.007': 'Riel DIN' },
+        'tablero1': { 'color.064': 'Estructura TDF', 'color-30.017': 'Puerta Frontal', 'color-30.016': 'Barra de Cobre' }
     };
 
     function resaltarPieza(index) {
@@ -112,33 +113,18 @@
         listaPiezas.innerHTML = "";
         const srcLower = modelViewer.src.toLowerCase();
         let proyectoKey = srcLower.includes("tablero2") ? "tablero2" : (srcLower.includes("tablero1") ? "tablero1" : "");
-        const nombresProyectoActual = bibliotecaModelos[proyectoKey] || {};
+        const nombresActuales = bibliotecaModelos[proyectoKey] || {};
         
         modelViewer.model.materials.forEach((material, index) => {
-            const nombreOriginal = material.name || `Pieza ${index + 1}`;
-            const nombreMostrar = nombresProyectoActual[nombreOriginal] || nombreOriginal;
+            const nombreMostrar = nombresActuales[material.name] || material.name || `Pieza ${index + 1}`;
             const div = document.createElement("div");
             div.className = "item-pieza-3d";
-            div.style = "background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0,255,204,0.1); transition: 0.3s;";
-            div.innerHTML = `<span style="color:white; font-weight:500;">${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
-            div.onclick = (e) => { e.stopPropagation(); resaltarPieza(index); };
+            div.style = "background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; justify-content: space-between; border: 1px solid rgba(0,255,204,0.1); color: white;";
+            div.innerHTML = `<span>${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
+            div.onclick = () => resaltarPieza(index);
             div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); abrirMenu(e, index); };
             listaPiezas.appendChild(div);
         });
-    });
-
-    let mouseMoved = false;
-    let startX, startY;
-    modelViewer.addEventListener('mousedown', (e) => { mouseMoved = false; startX = e.clientX; startY = e.clientY; });
-    modelViewer.addEventListener('mouseup', (e) => {
-        if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) mouseMoved = true;
-        if (!mouseMoved) {
-            const hit = modelViewer.materialFromPoint(e.clientX, e.clientY);
-            if (hit) {
-                if (e.button === 0) resaltarPieza(hit.index);
-                else if (e.button === 2) { abrirMenu(e, hit.index); resaltarPieza(hit.index); }
-            }
-        }
     });
 
     function abrirMenu(e, index) {
@@ -150,36 +136,33 @@
 
     window.ejecutarAccion3D = (tipo) => {
         if (piezaActualIndex === null) return;
-        const material = modelViewer.model.materials[piezaActualIndex];
-        const statusIcon = document.getElementById(`status-${piezaActualIndex}`);
-        const color = material.pbrMetallicRoughness.baseColorFactor;
+        const mat = modelViewer.model.materials[piezaActualIndex];
+        const color = mat.pbrMetallicRoughness.baseColorFactor;
         if (tipo === 'toggle') {
             const isHidden = color[3] === 0;
-            material.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], isHidden ? 1 : 0]);
-            material.setAlphaMode(isHidden ? 'OPAQUE' : 'BLEND');
-            statusIcon.innerText = isHidden ? "🟢" : "🔴";
+            mat.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], isHidden ? 1 : 0]);
+            mat.setAlphaMode(isHidden ? 'OPAQUE' : 'BLEND');
+            document.getElementById(`status-${piezaActualIndex}`).innerText = isHidden ? "🟢" : "🔴";
         } else if (tipo === 'fade') {
-            material.setAlphaMode('BLEND');
-            const newAlpha = color[3] < 1 ? 1 : 0.3;
-            material.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], newAlpha]);
-            statusIcon.innerText = newAlpha < 1 ? "🟡" : "🟢";
-            if (newAlpha === 1) material.setAlphaMode('OPAQUE');
+            const alpha = color[3] < 1 ? 1 : 0.3;
+            mat.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], alpha]);
+            mat.setAlphaMode(alpha < 1 ? 'BLEND' : 'OPAQUE');
+            document.getElementById(`status-${piezaActualIndex}`).innerText = alpha < 1 ? "🟡" : "🟢";
         }
         menu.style.display = "none";
     };
 
     window.addEventListener('click', () => menu.style.display = "none");
-    modelViewer.addEventListener('contextmenu', (e) => e.preventDefault());
+    modelViewer.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 
 <style>
-    /* BARRA EDRAWINGS DEFINITIVA: Gris metálico claro para contraste total */
+    /* BARRA EDRAWINGS */
     .edrawings-toolbar {
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: 20px; right: 20px;
         display: flex;
-        background: #e0e0e0; /* Color eDrawings original */
+        background: #e0e0e0;
         padding: 4px;
         border-radius: 6px;
         z-index: 1000;
@@ -190,61 +173,30 @@
     .edrawings-toolbar button {
         background: transparent;
         border: none;
-        color: #444444;
+        color: #444;
         padding: 8px 12px;
         cursor: pointer;
         font-size: 1.1rem;
-        transition: 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: flex; align-items: center; justify-content: center;
         border-radius: 4px;
     }
 
-    .edrawings-toolbar button:hover {
-        background: #bdbdbd;
-        color: #000000;
-    }
+    .edrawings-toolbar button:hover { background: #bdbdbd; color: #000; }
 
-    /* DROPDOWN VISTAS */
     .view-dropdown { position: relative; }
     .dropdown-content {
-        display: none;
-        position: absolute;
-        right: 0;
-        top: 100%;
-        background: #ffffff;
-        min-width: 140px;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-        border-radius: 4px;
-        overflow: hidden;
-        margin-top: 5px;
-        border: 1px solid #ccc;
+        display: none; position: absolute; right: 0; top: 100%;
+        background: #fff; min-width: 140px; border-radius: 4px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3); z-index: 1001;
     }
 
     .dropdown-content a {
-        color: #333333;
-        padding: 10px 15px;
-        text-decoration: none;
-        display: block;
-        font-size: 0.85rem;
-        font-family: sans-serif;
-        border-bottom: 1px solid #eee;
+        color: #333; padding: 10px 15px; text-decoration: none;
+        display: block; font-size: 0.85rem; border-bottom: 1px solid #eee;
     }
 
-    .dropdown-content a:last-child { border-bottom: none; }
-
-    .dropdown-content a:hover {
-        background-color: #00ffcc;
-        color: #020617;
-    }
-
+    .dropdown-content a:hover { background: #00ffcc; }
     .view-dropdown:hover .dropdown-content { display: block; }
-
-    /* ESTILOS DE LISTA EXISTENTES */
-    .item-pieza-3d:hover { border-color: #00ffcc !important; background: #2d3a4f !important; transform: translateX(5px); }
-    #menu-contextual-3d button:hover { background: #00ffcc !important; color: #020617 !important; }
-    #lista-piezas::-webkit-scrollbar { width: 6px; }
-    #lista-piezas::-webkit-scrollbar-thumb { background: #00ffcc; border-radius: 10px; }
+    .item-pieza-3d:hover { border-color: #00ffcc !important; }
 </style>
 {% endblock %}
