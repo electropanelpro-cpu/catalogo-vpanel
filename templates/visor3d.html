@@ -1,399 +1,231 @@
 {% extends 'base.html' %}
 
-
-
 {% block content %}
 
 <div style="display: flex; flex-direction: row; gap: 20px; width: 100%; min-height: 80vh; padding: 10px; box-sizing: border-box;">
 
-    
+    <div class="card" style="flex: 3; margin: 0; position: relative; min-width: 0; background: #0f172a; border-radius: 12px; overflow: hidden;">
+        <h1 style="font-size: 1.5rem; margin: 15px; color: white;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
 
-    <div class="card" style="flex: 3; margin: 0; position: relative; min-width: 0;">
+        <div class="edrawings-toolbar">
+            <button onclick="resetCamera()" title="Vista Inicial"><i class="fas fa-home"></i></button>
+            <button onclick="zoomIn()" title="Acercar"><i class="fas fa-search-plus"></i></button>
+            <button onclick="zoomOut()" title="Alejar"><i class="fas fa-search-minus"></i></button>
+            
+            <div class="view-dropdown">
+                <button title="Vistas Estándar"><i class="fas fa-desktop"></i> <i class="fas fa-caret-down" style="font-size: 0.7rem;"></i></button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="setView('0deg 90deg auto')">Frontal</a>
+                    <a href="#" onclick="setView('90deg 90deg auto')">Lateral</a>
+                    <a href="#" onclick="setView('0deg 0deg auto')">Superior</a>
+                    <a href="#" onclick="setView('45deg 45deg auto')">Isométrica</a>
+                </div>
+            </div>
 
-        <h1 style="font-size: 1.5rem; margin-bottom: 10px;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
-
-
-
-        <model-viewer
-
-            id="visor-pro"
-
-            src="{{ url_for('static', filename='models/' ~ proyecto.imagen.replace('.jpg', '.glb')) }}"
-
-            alt="Modelo 3D"
-
-            auto-rotate
-
-            camera-controls
-
-            interaction-prompt="none"
-
-            exposure="1"
-
-            shadow-intensity="1"
-
-            style="width:100%; height:650px; background:#0f172a; border-radius:12px; touch-action: none;">
-
-        </model-viewer>
-
-    </div>
-
-
-
-    <div class="card" style="flex: 1; margin: 0; min-width: 280px; display: flex; flex-direction: column; border-left: 3px solid #00ffcc; background: #020617;">
-
-        <h3 style="color: #00ffcc; font-size: 1.1rem; margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #334155;">📦 Lista de Piezas</h3>
-
-        <div id="lista-piezas" style="flex-grow: 1; overflow-y: auto; max-height: 600px; padding-right: 5px;">
-
-            <p style="font-size: 0.85rem; color: #64748b; text-align: center; margin-top: 20px;">Identificando componentes...</p>
-
+            <button onclick="toggleFullscreen()" title="Pantalla Completa"><i class="fas fa-expand"></i></button>
         </div>
 
+        <model-viewer
+            id="visor-pro"
+            src="{{ url_for('static', filename='models/' ~ proyecto.imagen.replace('.jpg', '.glb')) }}"
+            alt="Modelo 3D"
+            auto-rotate
+            camera-controls
+            interaction-prompt="none"
+            exposure="1"
+            shadow-intensity="1"
+            style="width:100%; height:650px; background:#0f172a; touch-action: none;">
+        </model-viewer>
     </div>
 
+    <div class="card" style="flex: 1; margin: 0; min-width: 280px; display: flex; flex-direction: column; border-left: 3px solid #00ffcc; background: #020617;">
+        <h3 style="color: #00ffcc; font-size: 1.1rem; margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #334155;">📦 Lista de Piezas</h3>
+        <div id="lista-piezas" style="flex-grow: 1; overflow-y: auto; max-height: 600px; padding-right: 5px;">
+            <p style="font-size: 0.85rem; color: #64748b; text-align: center; margin-top: 20px;">Identificando componentes...</p>
+        </div>
+    </div>
 </div>
-
-
 
 <div id="menu-contextual-3d" style="display: none; position: fixed; background: #1e293b; border: 1px solid #00ffcc; border-radius: 8px; z-index: 9999; min-width: 150px; box-shadow: 0 8px 25px rgba(0,0,0,0.9);">
-
     <button onclick="ejecutarAccion3D('toggle')" style="width: 100%; padding: 12px; background: none; border: none; color: white; text-align: left; cursor: pointer; border-bottom: 1px solid #334155; font-size: 0.85rem;">👁️ Ocultar / Mostrar</button>
-
     <button onclick="ejecutarAccion3D('fade')" style="width: 100%; padding: 12px; background: none; border: none; color: white; text-align: left; cursor: pointer; font-size: 0.85rem;">✨ Transparente</button>
-
 </div>
-
-
 
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
-
-
 <script>
-
     const modelViewer = document.querySelector("#visor-pro");
-
     const listaPiezas = document.querySelector("#lista-piezas");
-
     const menu = document.querySelector("#menu-contextual-3d");
-
     let piezaActualIndex = null;
 
-
-
-    const bibliotecaModelos = {
-
-        'tablero2': { 
-
-            'color': 'Gabinete Principal (Naranja)', 'color.001': 'Panel de Montaje Interno', 'color.002': 'Soporte de Base',
-
-            'color.006': 'Estructura de Puerta', 'white medium gloss plastic': 'Aisladores de Conexión',
-
-            'white medium gloss plastic.001': 'Canaletas PVC', 'color-13': 'Interruptor Termomagnético',
-
-            'color-14': 'Borneras de Tierra', 'color-4.007': 'Riel DIN Metálico', 'color-16': 'Carcasa de PLC',
-
-            'color-17': 'Módulos de Entrada/Salida', 'color-18': 'Cableado de Control'
-
-        },
-
-        'tablero1': { 
-
-            'color.064': 'Estructura Principal TDF', 'color-30.022': 'Placa de Montaje Posterior',
-
-            'color-30.023': 'Soporte de Interruptores', 'color-30.016': 'Barra de Cobre Principal',
-
-            'color-30.020': 'Aislador de Barra', 'color-30.017': 'Puerta Frontal TDF',
-
-            'color-30.021': 'Marco de Seguridad', 'color-30.018': 'Bisagra Reforzada',
-
-            'color-30.019': 'Manija con Llave', 'color-12.089': 'Interruptor General',
-
-            'color-12.085': 'Borneras de Salida', 'color-12.097': 'Canaleta de Cables'
-
-        }
-
+    // --- FUNCIONES DE LA TOOLBAR (eDrawings) ---
+    window.resetCamera = () => {
+        modelViewer.cameraOrbit = '0deg 75deg auto';
+        modelViewer.fieldOfView = 'auto';
+        modelViewer.jumpCameraToGoal();
     };
 
+    window.setView = (orbit) => {
+        modelViewer.cameraOrbit = orbit;
+        modelViewer.fieldOfView = 'auto';
+        modelViewer.jumpCameraToGoal();
+    };
 
+    window.zoomIn = () => {
+        modelViewer.zoom(10);
+    };
+
+    window.zoomOut = () => {
+        modelViewer.zoom(-10);
+    };
+
+    window.toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            modelViewer.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    };
+
+    // --- LÓGICA EXISTENTE ---
+    const bibliotecaModelos = {
+        'tablero2': { 'color': 'Gabinete Principal (Naranja)', 'color.001': 'Panel de Montaje Interno', 'color.002': 'Soporte de Base', 'color.006': 'Estructura de Puerta', 'white medium gloss plastic': 'Aisladores de Conexión', 'white medium gloss plastic.001': 'Canaletas PVC', 'color-13': 'Interruptor Termomagnético', 'color-14': 'Borneras de Tierra', 'color-4.007': 'Riel DIN Metálico', 'color-16': 'Carcasa de PLC', 'color-17': 'Módulos de Entrada/Salida', 'color-18': 'Cableado de Control' },
+        'tablero1': { 'color.064': 'Estructura Principal TDF', 'color-30.022': 'Placa de Montaje Posterior', 'color-30.023': 'Soporte de Interruptores', 'color-30.016': 'Barra de Cobre Principal', 'color-30.020': 'Aislador de Barra', 'color-30.017': 'Puerta Frontal TDF', 'color-30.021': 'Marco de Seguridad', 'color-30.018': 'Bisagra Reforzada', 'color-30.019': 'Manija con Llave', 'color-12.089': 'Interruptor General', 'color-12.085': 'Borneras de Salida', 'color-12.097': 'Canaleta de Cables' }
+    };
 
     function resaltarPieza(index) {
-
-        // Toggle: Si clickeas la misma, se apaga.
-
-        if (piezaActualIndex === index) {
-
-            index = null; 
-
-        }
-
+        if (piezaActualIndex === index) { index = null; }
         piezaActualIndex = index;
-
-
-
         modelViewer.model.materials.forEach((mat, i) => {
-
-            if (i === index) {
-
-                mat.setEmissiveFactor([0, 0.5, 0.4]); 
-
-            } else {
-
-                mat.setEmissiveFactor([0, 0, 0]); 
-
-            }
-
+            mat.setEmissiveFactor(i === index ? [0, 0.5, 0.4] : [0, 0, 0]);
         });
-
-        
-
         document.querySelectorAll('.item-pieza-3d').forEach((el, i) => {
-
-            if (i === index) {
-
-                el.style.borderColor = "#00ffcc";
-
-                el.style.background = "#2d3a4f";
-
-            } else {
-
-                el.style.borderColor = "rgba(0,255,204,0.1)";
-
-                el.style.background = "#1e293b";
-
-            }
-
+            el.style.borderColor = i === index ? "#00ffcc" : "rgba(0,255,204,0.1)";
+            el.style.background = i === index ? "#2d3a4f" : "#1e293b";
         });
-
     }
-
-
 
     modelViewer.addEventListener('load', () => {
-
         listaPiezas.innerHTML = "";
-
         const srcLower = modelViewer.src.toLowerCase();
-
         let proyectoKey = srcLower.includes("tablero2") ? "tablero2" : (srcLower.includes("tablero1") ? "tablero1" : "");
-
         const nombresProyectoActual = bibliotecaModelos[proyectoKey] || {};
-
         
-
         modelViewer.model.materials.forEach((material, index) => {
-
             const nombreOriginal = material.name || `Pieza ${index + 1}`;
-
             const nombreMostrar = nombresProyectoActual[nombreOriginal] || nombreOriginal;
-
-            
-
             const div = document.createElement("div");
-
             div.className = "item-pieza-3d";
-
             div.style = "background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0,255,204,0.1); transition: 0.3s;";
-
             div.innerHTML = `<span style="color:white; font-weight:500;">${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
-
-            
-
-            div.onclick = (e) => {
-
-                e.stopPropagation();
-
-                resaltarPieza(index);
-
-            };
-
-            
-
-            div.oncontextmenu = (e) => {
-
-                e.preventDefault();
-
-                e.stopPropagation();
-
-                abrirMenu(e, index);
-
-            };
-
+            div.onclick = (e) => { e.stopPropagation(); resaltarPieza(index); };
+            div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); abrirMenu(e, index); };
             listaPiezas.appendChild(div);
-
         });
-
     });
-
-
-
-    // MANEJO ESTRICTO DE CLICS PARA EVITAR MOVIMIENTOS
 
     let mouseMoved = false;
-
     let startX, startY;
-
-
-
-    modelViewer.addEventListener('mousedown', (e) => {
-
-        mouseMoved = false;
-
-        startX = e.clientX;
-
-        startY = e.clientY;
-
-    });
-
-
-
+    modelViewer.addEventListener('mousedown', (e) => { mouseMoved = false; startX = e.clientX; startY = e.clientY; });
     modelViewer.addEventListener('mouseup', (e) => {
-
-        const diffX = Math.abs(e.clientX - startX);
-
-        const diffY = Math.abs(e.clientY - startY);
-
-        
-
-        // Si el mouse se movió más de 5px, el usuario está rotando/panneando, no clickeando
-
-        if (diffX > 5 || diffY > 5) mouseMoved = true;
-
-
-
+        if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5) mouseMoved = true;
         if (!mouseMoved) {
-
             const hit = modelViewer.materialFromPoint(e.clientX, e.clientY);
-
             if (hit) {
-
-                // Prevenir que el visor procese el clic y mueva la cámara
-
-                e.preventDefault();
-
-                
-
-                if (e.button === 0) { // Izquierdo
-
-                    resaltarPieza(hit.index);
-
-                } else if (e.button === 2) { // Derecho
-
-                    abrirMenu(e, hit.index);
-
-                    if (piezaActualIndex !== hit.index) resaltarPieza(hit.index);
-
-                }
-
+                if (e.button === 0) resaltarPieza(hit.index);
+                else if (e.button === 2) { abrirMenu(e, hit.index); resaltarPieza(hit.index); }
             }
-
         }
-
     });
-
-
 
     function abrirMenu(e, index) {
-
         piezaActualIndex = index;
-
         menu.style.display = "block";
-
         menu.style.left = e.clientX + "px";
-
         menu.style.top = e.clientY + "px";
-
     }
-
-
 
     window.ejecutarAccion3D = (tipo) => {
-
         if (piezaActualIndex === null) return;
-
         const material = modelViewer.model.materials[piezaActualIndex];
-
         const statusIcon = document.getElementById(`status-${piezaActualIndex}`);
-
         const color = material.pbrMetallicRoughness.baseColorFactor;
-
-
-
         if (tipo === 'toggle') {
-
-            if (color[3] === 0) { 
-
-                material.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], 1]);
-
-                material.setAlphaMode('OPAQUE');
-
-                statusIcon.innerText = "🟢";
-
-            } else {
-
-                material.setAlphaMode('BLEND');
-
-                material.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], 0]);
-
-                statusIcon.innerText = "🔴";
-
-            }
-
-        } 
-
-        else if (tipo === 'fade') {
-
+            const isHidden = color[3] === 0;
+            material.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], isHidden ? 1 : 0]);
+            material.setAlphaMode(isHidden ? 'OPAQUE' : 'BLEND');
+            statusIcon.innerText = isHidden ? "🟢" : "🔴";
+        } else if (tipo === 'fade') {
             material.setAlphaMode('BLEND');
-
             const newAlpha = color[3] < 1 ? 1 : 0.3;
-
             material.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], newAlpha]);
-
             statusIcon.innerText = newAlpha < 1 ? "🟡" : "🟢";
-
             if (newAlpha === 1) material.setAlphaMode('OPAQUE');
-
         }
-
         menu.style.display = "none";
-
     };
 
-
-
     window.addEventListener('click', () => menu.style.display = "none");
-
     modelViewer.addEventListener('contextmenu', (e) => e.preventDefault());
-
 </script>
 
-
-
 <style>
-
-    .item-pieza-3d:hover {
-
-        border-color: #00ffcc !important;
-
-        background: #2d3a4f !important;
-
-        transform: translateX(5px);
-
+    /* ESTILOS TOOLBAR EDRAWINGS */
+    .edrawings-toolbar {
+        position: absolute;
+        top: 60px; /* Debajo del título */
+        right: 20px;
+        display: flex;
+        gap: 5px;
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 5px;
+        border-radius: 10px;
+        border: 1px solid #1e293b;
+        z-index: 100;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-
-    #menu-contextual-3d button:hover {
-
-        background: #00ffcc !important;
-
-        color: #020617 !important;
-
+    .edrawings-toolbar button {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: 0.2s;
+        border-radius: 6px;
     }
+    .edrawings-toolbar button:hover {
+        color: #00ffcc;
+        background: rgba(0, 255, 204, 0.1);
+    }
+    .view-dropdown { position: relative; }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background: #1e293b;
+        min-width: 120px;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        z-index: 101;
+        margin-top: 5px;
+    }
+    .dropdown-content a {
+        color: white;
+        padding: 10px;
+        text-decoration: none;
+        display: block;
+        font-size: 0.8rem;
+    }
+    .dropdown-content a:hover { background: #00ffcc; color: #020617; }
+    .view-dropdown:hover .dropdown-content { display: block; }
 
+    /* ESTILOS EXISTENTES */
+    .item-pieza-3d:hover { border-color: #00ffcc !important; background: #2d3a4f !important; transform: translateX(5px); }
+    #menu-contextual-3d button:hover { background: #00ffcc !important; color: #020617 !important; }
     #lista-piezas::-webkit-scrollbar { width: 6px; }
-
     #lista-piezas::-webkit-scrollbar-thumb { background: #00ffcc; border-radius: 10px; }
-
 </style>
-
 {% endblock %}
