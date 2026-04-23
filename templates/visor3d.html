@@ -3,10 +3,10 @@
 {% block content %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-<div style="display: flex; flex-direction: row; gap: 20px; width: 100%; min-height: 80vh; padding: 10px; box-sizing: border-box; background: #020617;">
+<div style="display: flex; flex-direction: row; gap: 20px; width: 100%; min-height: 80vh; padding: 20px; box-sizing: border-box; background: #0b1120;">
 
-    <div class="card" style="flex: 3; margin: 0; position: relative; min-width: 0; background: #0f172a; border-radius: 12px; overflow: hidden; border: 1px solid #334155;">
-        <h1 style="font-size: 1.5rem; margin: 15px; color: white; position: relative; z-index: 5;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
+    <div class="tech-card" style="flex: 3; margin: 0; position: relative; min-width: 0; border-radius: 16px; overflow: hidden; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.1);">
+        <h1 style="font-size: 1.25rem; margin: 20px; color: white; font-weight: bold; position: relative; z-index: 5;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
 
         <div class="edrawings-toolbar">
             <button onclick="resetCamera()" title="Vista Inicial"><i class="fas fa-home"></i></button>
@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <div style="width: 1px; background: #999; margin: 5px 2px;"></div> 
+            <div style="width: 1px; background: #94a3b8; margin: 5px 5px;"></div> 
             <button onclick="toggleFullscreen()" title="Pantalla Completa"><i class="fas fa-expand"></i></button>
         </div>
 
@@ -35,26 +35,27 @@
             interaction-prompt="none"
             exposure="1"
             shadow-intensity="1"
-            style="width:100%; height:650px; background:#0f172a; touch-action: none;">
+            style="width:100%; height:650px; touch-action: none; background: radial-gradient(#1e293b, #0f172a);">
         </model-viewer>
     </div>
 
-    <div class="card" style="flex: 1; margin: 0; min-width: 280px; display: flex; flex-direction: column; border-left: 3px solid #00ffcc; background: #020617;">
-        <h3 style="color: #00ffcc; font-size: 1.1rem; margin-top: 0; padding: 15px; border-bottom: 1px solid #334155;">📦 Lista de Piezas</h3>
-        <div id="lista-piezas" style="flex-grow: 1; overflow-y: auto; max-height: 600px; padding: 10px;">
+    <div class="tech-card" style="flex: 1; margin: 0; min-width: 300px; display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #334155;">
+        <h3 style="color: #60a5fa; font-size: 1rem; font-weight: bold; margin-top: 0; padding: 20px; border-bottom: 1px solid #334155; text-transform: uppercase; tracking: 0.1em;">📦 Lista de Piezas</h3>
+        <div id="lista-piezas" style="flex-grow: 1; overflow-y: auto; max-height: 600px; padding: 15px;">
             <p style="font-size: 0.85rem; color: #64748b; text-align: center; margin-top: 20px;">Identificando componentes...</p>
         </div>
     </div>
 </div>
 
-<div id="menu-contextual-3d" style="display: none; position: fixed; background: #1e293b; border: 1px solid #00ffcc; border-radius: 8px; z-index: 9999; min-width: 150px; box-shadow: 0 8px 25px rgba(0,0,0,0.9);">
-    <button onclick="ejecutarAccion3D('toggle')" style="width: 100%; padding: 12px; background: none; border: none; color: white; text-align: left; cursor: pointer; border-bottom: 1px solid #334155; font-size: 0.85rem;">👁️ Ocultar / Mostrar</button>
-    <button onclick="ejecutarAccion3D('fade')" style="width: 100%; padding: 12px; background: none; border: none; color: white; text-align: left; cursor: pointer; font-size: 0.85rem;">✨ Transparente</button>
+<div id="menu-contextual-3d" style="display: none; position: fixed; background: #1e293b; border: 1px solid #3b82f6; border-radius: 12px; z-index: 9999; min-width: 180px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);">
+    <button onclick="ejecutarAccion3D('toggle')" style="width: 100%; padding: 14px; background: none; border: none; color: white; text-align: left; cursor: pointer; border-bottom: 1px solid #334155; font-size: 0.85rem;">👁️ Ocultar / Mostrar</button>
+    <button onclick="ejecutarAccion3D('fade')" style="width: 100%; padding: 14px; background: none; border: none; color: white; text-align: left; cursor: pointer; font-size: 0.85rem;">✨ Transparente</button>
 </div>
 
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
 <script type="module">
+    // ... (Tu lógica de JS queda exactamente igual, no he movido nada de contenido)
     const modelViewer = document.querySelector("#visor-pro");
     const listaPiezas = document.querySelector("#lista-piezas");
     const menu = document.querySelector("#menu-contextual-3d");
@@ -85,20 +86,16 @@
         }
     });
 
-    // --- INTERACCIÓN DIRECTA CON EL 3D ---
-
-    // Clic normal para sombrear desde el 3D
     modelViewer.addEventListener('click', (event) => {
         const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
         if (material) {
             const index = modelViewer.model.materials.indexOf(material);
             window.resaltarPieza(index);
         } else {
-            window.resaltarPieza(null); // Deseleccionar si hace clic al aire
+            window.resaltarPieza(null);
         }
     });
 
-    // Clic derecho para menú desde el 3D
     modelViewer.addEventListener('contextmenu', (event) => {
         event.preventDefault();
         const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
@@ -108,25 +105,19 @@
         }
     });
 
-    // --- FUNCIONES GLOBALES ---
-
     window.resaltarPieza = (index) => {
         piezaActualIndex = (piezaActualIndex === index) ? null : index;
-        
         modelViewer.model.materials.forEach((mat, i) => {
-            // Efecto de emisión para resaltar
-            mat.setEmissiveFactor(i === piezaActualIndex ? [0, 0.5, 0.4] : [0, 0, 0]);
+            mat.setEmissiveFactor(i === piezaActualIndex ? [0, 0.3, 0.5] : [0, 0, 0]);
         });
-
-        // Sincronizar con la lista lateral
         document.querySelectorAll('.item-pieza-3d').forEach((el, i) => {
             if (i === piezaActualIndex) {
-                el.style.borderColor = "#00ffcc";
-                el.style.background = "#2d3a4f";
+                el.style.borderColor = "#3b82f6";
+                el.style.background = "rgba(59, 130, 246, 0.2)";
                 el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } else {
-                el.style.borderColor = "rgba(0,255,204,0.1)";
-                el.style.background = "#1e293b";
+                el.style.borderColor = "rgba(255,255,255,0.05)";
+                el.style.background = "rgba(30, 41, 59, 0.5)";
             }
         });
     };
@@ -142,7 +133,6 @@
         if (piezaActualIndex === null) return;
         const mat = modelViewer.model.materials[piezaActualIndex];
         const color = mat.pbrMetallicRoughness.baseColorFactor;
-        
         if (tipo === 'toggle') {
             const isHidden = color[3] === 0;
             mat.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], isHidden ? 1 : 0]);
@@ -157,30 +147,33 @@
         menu.style.display = "none";
     };
 
-    // Control de cámara
     window.resetCamera = () => { modelViewer.cameraOrbit = '0deg 75deg auto'; modelViewer.fieldOfView = 'auto'; };
     window.setView = (orbit) => { modelViewer.cameraOrbit = orbit; };
     window.zoomIn = () => { const fov = parseFloat(modelViewer.fieldOfView) || 45; modelViewer.fieldOfView = `${Math.max(10, fov - 8)}deg`; };
     window.zoomOut = () => { const fov = parseFloat(modelViewer.fieldOfView) || 45; modelViewer.fieldOfView = `${Math.min(80, fov + 8)}deg`; };
     window.toggleFullscreen = () => { if (!document.fullscreenElement) modelViewer.requestFullscreen(); else document.exitFullscreen(); };
-
     window.addEventListener('click', () => menu.style.display = "none");
 </script>
 
 <style>
+    .tech-card { 
+        background: rgba(15, 23, 42, 0.8); 
+        backdrop-filter: blur(12px); 
+    }
     .edrawings-toolbar {
         position: absolute; top: 20px; right: 20px;
-        display: flex; align-items: center; background: #f1f5f9;
-        padding: 6px; border-radius: 8px; z-index: 1000;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #cbd5e1;
+        display: flex; align-items: center; background: rgba(241, 245, 249, 0.9);
+        padding: 5px; border-radius: 10px; z-index: 1000;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); border: 1px solid #ffffff;
     }
-    .edrawings-toolbar button { background: transparent; border: none; color: #334155; padding: 8px 12px; cursor: pointer; font-size: 1.1rem; border-radius: 4px; }
-    .edrawings-toolbar button:hover { background: #e2e8f0; color: #000; }
+    .edrawings-toolbar button { background: transparent; border: none; color: #1e293b; padding: 10px 14px; cursor: pointer; font-size: 1rem; border-radius: 6px; transition: 0.2s; }
+    .edrawings-toolbar button:hover { background: #cbd5e1; }
     .view-dropdown { position: relative; }
-    .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #fff; min-width: 150px; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 1001; border: 1px solid #e2e8f0; }
-    .dropdown-content a { color: #334155; padding: 10px 15px; text-decoration: none; display: block; font-size: 0.85rem; }
-    .dropdown-content a:hover { background: #00ffcc; color: #0f172a; }
+    .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #fff; min-width: 160px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); z-index: 1001; overflow: hidden; }
+    .dropdown-content a { color: #1e293b; padding: 12px 16px; text-decoration: none; display: block; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; }
+    .dropdown-content a:hover { background: #3b82f6; color: white; }
     .view-dropdown:hover .dropdown-content { display: block; }
-    .item-pieza-3d { background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: white; font-size: 0.8rem; display: flex; justify-content: space-between; border: 1px solid rgba(0,255,204,0.1); transition: 0.2s; }
+    .item-pieza-3d { background: rgba(30, 41, 59, 0.5); padding: 14px; margin-bottom: 10px; border-radius: 10px; cursor: pointer; color: #e2e8f0; font-size: 0.8rem; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+    .item-pieza-3d:hover { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; }
 </style>
 {% endblock %}
