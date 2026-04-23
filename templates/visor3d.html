@@ -9,11 +9,6 @@
         <h1 style="font-size: 1.5rem; margin: 15px; color: white; position: relative; z-index: 5;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
 
         <div class="edrawings-toolbar">
-            <div class="explosion-container">
-                <i class="fas fa-cubes" style="font-size: 0.8rem; color: #555;"></i>
-                <input type="range" id="explosion-slider" min="0" max="1" step="0.01" value="0" title="Explotar Modelo">
-            </div>
-
             <button onclick="resetCamera()" title="Vista Inicial"><i class="fas fa-home"></i></button>
             <button onclick="zoomIn()" title="Acercar"><i class="fas fa-search-plus"></i></button>
             <button onclick="zoomOut()" title="Alejar"><i class="fas fa-search-minus"></i></button>
@@ -63,8 +58,6 @@
     const modelViewer = document.querySelector("#visor-pro");
     const listaPiezas = document.querySelector("#lista-piezas");
     const menu = document.querySelector("#menu-contextual-3d");
-    const slider = document.querySelector("#explosion-slider");
-    const originalPositions = new Map();
     let piezaActualIndex = null;
 
     const bibliotecaModelos = {
@@ -72,35 +65,7 @@
         'tablero1': { 'color.064': 'Estructura TDF', 'color-30.017': 'Puerta Frontal', 'color-30.016': 'Barra de Cobre' }
     };
 
-    // Función crucial para capturar la escena cuando esté lista
-    const inicializarEscena = () => {
-        const scene = modelViewer.toObject3D();
-        if (!scene) return;
-
-        // Si ya tenemos posiciones, no repetir
-        if (originalPositions.size > 0) return;
-
-        scene.traverse((node) => {
-            if (node.isMesh) {
-                // Guardar posición local original
-                originalPositions.set(node.uuid, {
-                    pos: node.position.clone(),
-                    dir: node.position.clone().normalize() 
-                });
-            }
-        });
-
-        if (originalPositions.size > 0) {
-            console.log("Escena capturada para explosión.");
-            clearInterval(checkScene);
-        }
-    };
-
-    // Reintentar cada 500ms hasta que la escena sea accesible
-    const checkScene = setInterval(inicializarEscena, 500);
-
     modelViewer.addEventListener('load', () => {
-        // Cargar lista de piezas
         listaPiezas.innerHTML = "";
         const srcLower = modelViewer.src.toLowerCase();
         let proyectoKey = srcLower.includes("tablero2") ? "tablero2" : (srcLower.includes("tablero1") ? "tablero1" : "");
@@ -111,63 +76,58 @@
                 const nombreMostrar = nombresActuales[material.name] || material.name || `Pieza ${index + 1}`;
                 const div = document.createElement("div");
                 div.className = "item-pieza-3d";
+                div.id = `item-lista-${index}`;
                 div.innerHTML = `<span>${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
-                div.onclick = () => window.resaltarPieza(index);
+                div.onclick = (e) => { e.stopPropagation(); window.resaltarPieza(index); };
                 div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); window.abrirMenu(e, index); };
                 listaPiezas.appendChild(div);
             });
         }
     });
 
-    // Lógica de explosión mejorada
-    slider.addEventListener('input', (e) => {
-        const factor = parseFloat(e.target.value) * 5.0; // Aumentado el rango de movimiento
-        const scene = modelViewer.toObject3D();
-        if (!scene) return;
+    // --- INTERACCIÓN DIRECTA CON EL 3D ---
 
-        scene.traverse((node) => {
-            if (node.isMesh && originalPositions.has(node.uuid)) {
-                const original = originalPositions.get(node.uuid);
-                node.position.x = original.pos.x + (original.dir.x * factor);
-                node.position.y = original.pos.y + (original.dir.y * factor);
-                node.position.z = original.pos.z + (original.dir.z * factor);
-            }
-        });
+    // Clic normal para sombrear desde el 3D
+    modelViewer.addEventListener('click', (event) => {
+        const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
+        if (material) {
+            const index = modelViewer.model.materials.indexOf(material);
+            window.resaltarPieza(index);
+        } else {
+            window.resaltarPieza(null); // Deseleccionar si hace clic al aire
+        }
+    });
+
+    // Clic derecho para menú desde el 3D
+    modelViewer.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+        const material = modelViewer.materialFromPoint(event.clientX, event.clientY);
+        if (material) {
+            const index = modelViewer.model.materials.indexOf(material);
+            window.abrirMenu(event, index);
+        }
     });
 
     // --- FUNCIONES GLOBALES ---
-    window.resetCamera = () => {
-        modelViewer.cameraOrbit = '0deg 75deg auto';
-        modelViewer.fieldOfView = 'auto';
-    };
-
-    window.setView = (orbit) => {
-        modelViewer.cameraOrbit = orbit;
-    };
-
-    window.zoomIn = () => {
-        const fov = parseFloat(modelViewer.fieldOfView) || 45;
-        modelViewer.fieldOfView = `${Math.max(10, fov - 8)}deg`;
-    };
-
-    window.zoomOut = () => {
-        const fov = parseFloat(modelViewer.fieldOfView) || 45;
-        modelViewer.fieldOfView = `${Math.min(80, fov + 8)}deg`;
-    };
-
-    window.toggleFullscreen = () => {
-        if (!document.fullscreenElement) modelViewer.requestFullscreen();
-        else document.exitFullscreen();
-    };
 
     window.resaltarPieza = (index) => {
         piezaActualIndex = (piezaActualIndex === index) ? null : index;
+        
         modelViewer.model.materials.forEach((mat, i) => {
+            // Efecto de emisión para resaltar
             mat.setEmissiveFactor(i === piezaActualIndex ? [0, 0.5, 0.4] : [0, 0, 0]);
         });
+
+        // Sincronizar con la lista lateral
         document.querySelectorAll('.item-pieza-3d').forEach((el, i) => {
-            el.style.borderColor = i === piezaActualIndex ? "#00ffcc" : "rgba(0,255,204,0.1)";
-            el.style.background = i === piezaActualIndex ? "#2d3a4f" : "#1e293b";
+            if (i === piezaActualIndex) {
+                el.style.borderColor = "#00ffcc";
+                el.style.background = "#2d3a4f";
+                el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                el.style.borderColor = "rgba(0,255,204,0.1)";
+                el.style.background = "#1e293b";
+            }
         });
     };
 
@@ -182,6 +142,7 @@
         if (piezaActualIndex === null) return;
         const mat = modelViewer.model.materials[piezaActualIndex];
         const color = mat.pbrMetallicRoughness.baseColorFactor;
+        
         if (tipo === 'toggle') {
             const isHidden = color[3] === 0;
             mat.pbrMetallicRoughness.setBaseColorFactor([color[0], color[1], color[2], isHidden ? 1 : 0]);
@@ -196,6 +157,13 @@
         menu.style.display = "none";
     };
 
+    // Control de cámara
+    window.resetCamera = () => { modelViewer.cameraOrbit = '0deg 75deg auto'; modelViewer.fieldOfView = 'auto'; };
+    window.setView = (orbit) => { modelViewer.cameraOrbit = orbit; };
+    window.zoomIn = () => { const fov = parseFloat(modelViewer.fieldOfView) || 45; modelViewer.fieldOfView = `${Math.max(10, fov - 8)}deg`; };
+    window.zoomOut = () => { const fov = parseFloat(modelViewer.fieldOfView) || 45; modelViewer.fieldOfView = `${Math.min(80, fov + 8)}deg`; };
+    window.toggleFullscreen = () => { if (!document.fullscreenElement) modelViewer.requestFullscreen(); else document.exitFullscreen(); };
+
     window.addEventListener('click', () => menu.style.display = "none");
 </script>
 
@@ -203,12 +171,10 @@
     .edrawings-toolbar {
         position: absolute; top: 20px; right: 20px;
         display: flex; align-items: center; background: #f1f5f9;
-        padding: 6px 12px; border-radius: 8px; z-index: 1000;
+        padding: 6px; border-radius: 8px; z-index: 1000;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #cbd5e1;
     }
-    .explosion-container { display: flex; align-items: center; gap: 10px; padding-right: 12px; margin-right: 8px; border-right: 1px solid #94a3b8; }
-    #explosion-slider { width: 90px; cursor: pointer; accent-color: #00ffcc; height: 5px; }
-    .edrawings-toolbar button { background: transparent; border: none; color: #334155; padding: 8px; cursor: pointer; font-size: 1rem; border-radius: 4px; transition: 0.2s; }
+    .edrawings-toolbar button { background: transparent; border: none; color: #334155; padding: 8px 12px; cursor: pointer; font-size: 1.1rem; border-radius: 4px; }
     .edrawings-toolbar button:hover { background: #e2e8f0; color: #000; }
     .view-dropdown { position: relative; }
     .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #fff; min-width: 150px; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 1001; border: 1px solid #e2e8f0; }
@@ -216,6 +182,5 @@
     .dropdown-content a:hover { background: #00ffcc; color: #0f172a; }
     .view-dropdown:hover .dropdown-content { display: block; }
     .item-pieza-3d { background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: white; font-size: 0.8rem; display: flex; justify-content: space-between; border: 1px solid rgba(0,255,204,0.1); transition: 0.2s; }
-    .item-pieza-3d:hover { border-color: #00ffcc; background: #2d3a4f; }
 </style>
 {% endblock %}
