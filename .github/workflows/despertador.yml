@@ -1,12 +1,16 @@
 name: Despertador de V-Panel
+
 on:
   schedule:
-    - cron: '*/14 * * * *'  # Se ejecuta cada 14 minutos
-  workflow_dispatch:        # Permite ejecutarlo a mano para probar
+    # Se ejecuta cada 10 minutos para asegurar que no se duerma
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Botón para activar manualmente
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Enviando señal a Render
-        run: curl https://electropanelpro.onrender.com
+      - name: Despertando Servidor de ElectroPanel
+        run: |
+          curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" -s -I https://catalogo-vpanel.onrender.com
+          echo "Señal enviada correctamente a las $(date)"
