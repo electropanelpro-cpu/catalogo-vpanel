@@ -72,12 +72,17 @@
         'tablero1': { 'color.064': 'Estructura TDF', 'color-30.017': 'Puerta Frontal', 'color-30.016': 'Barra de Cobre' }
     };
 
-    modelViewer.addEventListener('load', () => {
+    // Función crucial para capturar la escena cuando esté lista
+    const inicializarEscena = () => {
         const scene = modelViewer.toObject3D();
-        originalPositions.clear();
-        
+        if (!scene) return;
+
+        // Si ya tenemos posiciones, no repetir
+        if (originalPositions.size > 0) return;
+
         scene.traverse((node) => {
             if (node.isMesh) {
+                // Guardar posición local original
                 originalPositions.set(node.uuid, {
                     pos: node.position.clone(),
                     dir: node.position.clone().normalize() 
@@ -85,26 +90,41 @@
             }
         });
 
+        if (originalPositions.size > 0) {
+            console.log("Escena capturada para explosión.");
+            clearInterval(checkScene);
+        }
+    };
+
+    // Reintentar cada 500ms hasta que la escena sea accesible
+    const checkScene = setInterval(inicializarEscena, 500);
+
+    modelViewer.addEventListener('load', () => {
         // Cargar lista de piezas
         listaPiezas.innerHTML = "";
         const srcLower = modelViewer.src.toLowerCase();
         let proyectoKey = srcLower.includes("tablero2") ? "tablero2" : (srcLower.includes("tablero1") ? "tablero1" : "");
         const nombresActuales = bibliotecaModelos[proyectoKey] || {};
 
-        modelViewer.model.materials.forEach((material, index) => {
-            const nombreMostrar = nombresActuales[material.name] || material.name || `Pieza ${index + 1}`;
-            const div = document.createElement("div");
-            div.className = "item-pieza-3d";
-            div.innerHTML = `<span>${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
-            div.onclick = () => window.resaltarPieza(index);
-            div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); window.abrirMenu(e, index); };
-            listaPiezas.appendChild(div);
-        });
+        if (modelViewer.model && modelViewer.model.materials) {
+            modelViewer.model.materials.forEach((material, index) => {
+                const nombreMostrar = nombresActuales[material.name] || material.name || `Pieza ${index + 1}`;
+                const div = document.createElement("div");
+                div.className = "item-pieza-3d";
+                div.innerHTML = `<span>${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
+                div.onclick = () => window.resaltarPieza(index);
+                div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); window.abrirMenu(e, index); };
+                listaPiezas.appendChild(div);
+            });
+        }
     });
 
+    // Lógica de explosión mejorada
     slider.addEventListener('input', (e) => {
-        const factor = parseFloat(e.target.value) * 2.0; 
+        const factor = parseFloat(e.target.value) * 5.0; // Aumentado el rango de movimiento
         const scene = modelViewer.toObject3D();
+        if (!scene) return;
+
         scene.traverse((node) => {
             if (node.isMesh && originalPositions.has(node.uuid)) {
                 const original = originalPositions.get(node.uuid);
@@ -115,17 +135,14 @@
         });
     });
 
-    // --- EXPORTACIÓN A WINDOW (Para que los onclick funcionen) ---
+    // --- FUNCIONES GLOBALES ---
     window.resetCamera = () => {
         modelViewer.cameraOrbit = '0deg 75deg auto';
         modelViewer.fieldOfView = 'auto';
-        modelViewer.jumpCameraToGoal();
     };
 
     window.setView = (orbit) => {
         modelViewer.cameraOrbit = orbit;
-        modelViewer.fieldOfView = 'auto';
-        modelViewer.jumpCameraToGoal();
     };
 
     window.zoomIn = () => {
@@ -185,19 +202,20 @@
 <style>
     .edrawings-toolbar {
         position: absolute; top: 20px; right: 20px;
-        display: flex; align-items: center; background: #e0e0e0;
-        padding: 4px 8px; border-radius: 6px; z-index: 1000;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.6); border: 1px solid #ffffff;
+        display: flex; align-items: center; background: #f1f5f9;
+        padding: 6px 12px; border-radius: 8px; z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #cbd5e1;
     }
-    .explosion-container { display: flex; align-items: center; gap: 8px; padding-right: 10px; margin-right: 5px; border-right: 1px solid #bbb; }
-    #explosion-slider { width: 70px; cursor: pointer; accent-color: #00ffcc; height: 4px; }
-    .edrawings-toolbar button { background: transparent; border: none; color: #444; padding: 8px 10px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
-    .edrawings-toolbar button:hover { background: #bdbdbd; color: #000; }
+    .explosion-container { display: flex; align-items: center; gap: 10px; padding-right: 12px; margin-right: 8px; border-right: 1px solid #94a3b8; }
+    #explosion-slider { width: 90px; cursor: pointer; accent-color: #00ffcc; height: 5px; }
+    .edrawings-toolbar button { background: transparent; border: none; color: #334155; padding: 8px; cursor: pointer; font-size: 1rem; border-radius: 4px; transition: 0.2s; }
+    .edrawings-toolbar button:hover { background: #e2e8f0; color: #000; }
     .view-dropdown { position: relative; }
-    .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #fff; min-width: 140px; border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); z-index: 1001; border: 1px solid #ccc; }
-    .dropdown-content a { color: #333; padding: 10px 15px; text-decoration: none; display: block; font-size: 0.85rem; border-bottom: 1px solid #eee; }
-    .dropdown-content a:hover { background: #00ffcc; color: #020617; }
+    .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #fff; min-width: 150px; border-radius: 6px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 1001; border: 1px solid #e2e8f0; }
+    .dropdown-content a { color: #334155; padding: 10px 15px; text-decoration: none; display: block; font-size: 0.85rem; }
+    .dropdown-content a:hover { background: #00ffcc; color: #0f172a; }
     .view-dropdown:hover .dropdown-content { display: block; }
-    .item-pieza-3d { background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: white; font-size: 0.8rem; display: flex; justify-content: space-between; border: 1px solid rgba(0,255,204,0.1); transition: 0.3s; }
+    .item-pieza-3d { background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: white; font-size: 0.8rem; display: flex; justify-content: space-between; border: 1px solid rgba(0,255,204,0.1); transition: 0.2s; }
+    .item-pieza-3d:hover { border-color: #00ffcc; background: #2d3a4f; }
 </style>
 {% endblock %}
