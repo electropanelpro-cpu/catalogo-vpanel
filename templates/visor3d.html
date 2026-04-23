@@ -9,7 +9,6 @@
         <h1 style="font-size: 1.5rem; margin: 15px; color: white; position: relative; z-index: 5;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
 
         <div class="edrawings-toolbar">
-            
             <div class="explosion-container">
                 <i class="fas fa-cubes" style="font-size: 0.8rem; color: #555;"></i>
                 <input type="range" id="explosion-slider" min="0" max="1" step="0.01" value="0" title="Explotar Modelo">
@@ -68,7 +67,11 @@
     const originalPositions = new Map();
     let piezaActualIndex = null;
 
-    // --- LÓGICA DE EXPLOSIÓN ---
+    const bibliotecaModelos = {
+        'tablero2': { 'color': 'Gabinete Principal', 'color.001': 'Panel de Montaje', 'color.13': 'Interruptor Termomagnético', 'color-4.007': 'Riel DIN' },
+        'tablero1': { 'color.064': 'Estructura TDF', 'color-30.017': 'Puerta Frontal', 'color-30.016': 'Barra de Cobre' }
+    };
+
     modelViewer.addEventListener('load', () => {
         const scene = modelViewer.toObject3D();
         originalPositions.clear();
@@ -82,25 +85,9 @@
             }
         });
 
-        slider.addEventListener('input', (e) => {
-            const factor = parseFloat(e.target.value) * 1.8; // Intensidad de la explosión
-            scene.traverse((node) => {
-                if (node.isMesh && originalPositions.has(node.uuid)) {
-                    const original = originalPositions.get(node.uuid);
-                    node.position.x = original.pos.x + (original.dir.x * factor);
-                    node.position.y = original.pos.y + (original.dir.y * factor);
-                    node.position.z = original.pos.z + (original.dir.z * factor);
-                }
-            });
-        });
-
         // Cargar lista de piezas
         listaPiezas.innerHTML = "";
         const srcLower = modelViewer.src.toLowerCase();
-        const bibliotecaModelos = {
-            'tablero2': { 'color': 'Gabinete Principal', 'color.001': 'Panel de Montaje', 'color.13': 'Interruptor Termomagnético', 'color-4.007': 'Riel DIN' },
-            'tablero1': { 'color.064': 'Estructura TDF', 'color-30.017': 'Puerta Frontal', 'color-30.016': 'Barra de Cobre' }
-        };
         let proyectoKey = srcLower.includes("tablero2") ? "tablero2" : (srcLower.includes("tablero1") ? "tablero1" : "");
         const nombresActuales = bibliotecaModelos[proyectoKey] || {};
 
@@ -109,13 +96,26 @@
             const div = document.createElement("div");
             div.className = "item-pieza-3d";
             div.innerHTML = `<span>${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
-            div.onclick = () => resaltarPieza(index);
-            div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); abrirMenu(e, index); };
+            div.onclick = () => window.resaltarPieza(index);
+            div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); window.abrirMenu(e, index); };
             listaPiezas.appendChild(div);
         });
     });
 
-    // --- FUNCIONES GLOBALES ---
+    slider.addEventListener('input', (e) => {
+        const factor = parseFloat(e.target.value) * 2.0; 
+        const scene = modelViewer.toObject3D();
+        scene.traverse((node) => {
+            if (node.isMesh && originalPositions.has(node.uuid)) {
+                const original = originalPositions.get(node.uuid);
+                node.position.x = original.pos.x + (original.dir.x * factor);
+                node.position.y = original.pos.y + (original.dir.y * factor);
+                node.position.z = original.pos.z + (original.dir.z * factor);
+            }
+        });
+    });
+
+    // --- EXPORTACIÓN A WINDOW (Para que los onclick funcionen) ---
     window.resetCamera = () => {
         modelViewer.cameraOrbit = '0deg 75deg auto';
         modelViewer.fieldOfView = 'auto';
@@ -143,23 +143,23 @@
         else document.exitFullscreen();
     };
 
-    function resaltarPieza(index) {
-        piezaActualIndex = index;
+    window.resaltarPieza = (index) => {
+        piezaActualIndex = (piezaActualIndex === index) ? null : index;
         modelViewer.model.materials.forEach((mat, i) => {
-            mat.setEmissiveFactor(i === index ? [0, 0.5, 0.4] : [0, 0, 0]);
+            mat.setEmissiveFactor(i === piezaActualIndex ? [0, 0.5, 0.4] : [0, 0, 0]);
         });
         document.querySelectorAll('.item-pieza-3d').forEach((el, i) => {
-            el.style.borderColor = i === index ? "#00ffcc" : "rgba(0,255,204,0.1)";
-            el.style.background = i === index ? "#2d3a4f" : "#1e293b";
+            el.style.borderColor = i === piezaActualIndex ? "#00ffcc" : "rgba(0,255,204,0.1)";
+            el.style.background = i === piezaActualIndex ? "#2d3a4f" : "#1e293b";
         });
-    }
+    };
 
-    function abrirMenu(e, index) {
+    window.abrirMenu = (e, index) => {
         piezaActualIndex = index;
         menu.style.display = "block";
         menu.style.left = e.clientX + "px";
         menu.style.top = e.clientY + "px";
-    }
+    };
 
     window.ejecutarAccion3D = (tipo) => {
         if (piezaActualIndex === null) return;
@@ -180,64 +180,24 @@
     };
 
     window.addEventListener('click', () => menu.style.display = "none");
-    modelViewer.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 
 <style>
-    /* BARRA EDRAWINGS */
     .edrawings-toolbar {
-        position: absolute;
-        top: 20px; right: 20px;
-        display: flex; align-items: center;
-        background: #e0e0e0;
-        padding: 4px 8px;
-        border-radius: 6px;
-        z-index: 1000;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-        border: 1px solid #ffffff;
+        position: absolute; top: 20px; right: 20px;
+        display: flex; align-items: center; background: #e0e0e0;
+        padding: 4px 8px; border-radius: 6px; z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.6); border: 1px solid #ffffff;
     }
-
-    .explosion-container {
-        display: flex; align-items: center; gap: 8px;
-        padding-right: 10px; margin-right: 5px;
-        border-right: 1px solid #bbb;
-    }
-
-    #explosion-slider {
-        width: 70px; cursor: pointer; accent-color: #00ffcc; height: 4px;
-    }
-
-    .edrawings-toolbar button {
-        background: transparent; border: none; color: #444;
-        padding: 8px 10px; cursor: pointer; font-size: 1.1rem;
-        display: flex; align-items: center; justify-content: center;
-        border-radius: 4px;
-    }
-
+    .explosion-container { display: flex; align-items: center; gap: 8px; padding-right: 10px; margin-right: 5px; border-right: 1px solid #bbb; }
+    #explosion-slider { width: 70px; cursor: pointer; accent-color: #00ffcc; height: 4px; }
+    .edrawings-toolbar button { background: transparent; border: none; color: #444; padding: 8px 10px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
     .edrawings-toolbar button:hover { background: #bdbdbd; color: #000; }
-
     .view-dropdown { position: relative; }
-    .dropdown-content {
-        display: none; position: absolute; right: 0; top: 100%;
-        background: #fff; min-width: 140px; border-radius: 4px;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.3); z-index: 1001;
-        border: 1px solid #ccc;
-    }
-
-    .dropdown-content a {
-        color: #333; padding: 10px 15px; text-decoration: none;
-        display: block; font-size: 0.85rem; border-bottom: 1px solid #eee;
-    }
-
+    .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #fff; min-width: 140px; border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); z-index: 1001; border: 1px solid #ccc; }
+    .dropdown-content a { color: #333; padding: 10px 15px; text-decoration: none; display: block; font-size: 0.85rem; border-bottom: 1px solid #eee; }
     .dropdown-content a:hover { background: #00ffcc; color: #020617; }
     .view-dropdown:hover .dropdown-content { display: block; }
-
-    .item-pieza-3d {
-        background: #1e293b; padding: 12px; margin-bottom: 8px;
-        border-radius: 8px; cursor: pointer; color: white;
-        font-size: 0.8rem; display: flex; justify-content: space-between;
-        border: 1px solid rgba(0,255,204,0.1); transition: 0.3s;
-    }
-    .item-pieza-3d:hover { border-color: #00ffcc; background: #2d3a4f; }
+    .item-pieza-3d { background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: white; font-size: 0.8rem; display: flex; justify-content: space-between; border: 1px solid rgba(0,255,204,0.1); transition: 0.3s; }
 </style>
 {% endblock %}
