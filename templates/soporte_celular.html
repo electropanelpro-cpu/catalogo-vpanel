@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Asistente IA - V-Panel</title>
+    <title>Soporte IA | ElectroPanel Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        /* Evita el scroll elástico y fija el alto real del dispositivo */
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            background-color: #0b1120; 
-            color: white; 
-            overflow: hidden; 
-        }
-
         :root {
-            --bg-dark: #0d1117;
-            --card-bg: #161b22;
-            --border-color: #30363d;
-            --accent-blue: #58a6ff;
+            --bg-dark: #020617; /* Azul Noche unificado */
+            --card-bg: #0b1120;
+            --border-color: #1e293b;
+            --accent-blue: #00ffcc; /* Cian Eléctrico */
             --accent-green: #00ffcc; 
         }
 
-        /* Contenedor principal */
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            background-color: var(--bg-dark); 
+            color: white; 
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif;
+        }
+
         .main-wrapper {
             display: flex;
             flex-direction: column;
@@ -36,46 +37,43 @@
         /* --- NAVBAR --- */
         .navbar-mobile {
             position: fixed; top: 0; left: 0; width: 100%; height: 75px;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
-            border-bottom: 1px solid #1e293b;
+            background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; z-index: 1000;
         }
 
-        /* LOGO ESTILO INICIO (REDONDO Y CON BRILLO) */
         .navbar-logo-small { 
-            height: 32px; 
-            width: 32px;
+            height: 32px; width: 32px;
             border-radius: 50%; 
             border: 1.5px solid var(--accent-blue); 
-            box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
             object-fit: cover;
-            background: #0b1120;
+            background: var(--bg-dark);
         }
 
         /* --- MENÚ LATERAL --- */
         .menu-overlay {
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
-            background: rgba(11, 17, 32, 0.98); z-index: 2000; 
+            background: rgba(2, 6, 23, 0.98); z-index: 2000; 
             transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; 
-            border-left: 1px solid #1e293b;
+            border-left: 1px solid var(--border-color);
         }
         .menu-overlay.active { right: 0; }
 
         .menu-links { display: flex; flex-direction: column; gap: 15px; margin-top: 50px; }
         
         .menu-item-btn {
-            background: #1e293b; border: 1px solid #334155;
+            background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: 12px; padding: 18px; color: white;
             text-decoration: none; display: flex; align-items: center; gap: 15px;
-            font-weight: 600;
-            transition: 0.3s;
+            font-weight: 600; transition: 0.3s;
         }
         .menu-item-btn i { color: var(--accent-blue); width: 25px; }
 
-        /* Clase activa para que resalte en VERDE */
         .menu-item-btn.active {
             border-color: var(--accent-green) !important;
+            background: rgba(0, 255, 204, 0.05);
             box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
         }
 
@@ -87,14 +85,30 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .bot-msg { background: #1e293b; border-bottom-left-radius: 2px; }
-        .user-msg { background: #3b82f6; border-bottom-right-radius: 2px; align-self: flex-end; }
+        .bot-msg { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 2px; 
+            color: #e2e8f0;
+        }
+
+        .user-msg { 
+            background: rgba(0, 255, 204, 0.15); 
+            border: 1px solid var(--accent-blue);
+            color: white;
+            border-bottom-right-radius: 2px; 
+            align-self: flex-end; 
+        }
         
         /* Área de entrada */
         .input-area { 
-            background: #161e2e; 
-            border-top: 1px solid #334155; 
+            background: #0f172a; 
+            border-top: 1px solid var(--border-color); 
             padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        }
+
+        .status-dot {
+            box-shadow: 0 0 8px #00ffcc;
         }
     </style>
 </head>
@@ -110,7 +124,7 @@
 
     <div class="menu-overlay" id="menuOverlay">
         <div class="flex justify-between items-center">
-            <span class="text-[#58a6ff] font-mono text-xs">// SISTEMA</span>
+            <span class="text-[#00ffcc] font-mono text-xs">// SISTEMA_IA_CORE</span>
             <button id="closeMenu" class="text-white text-2xl"><i class="fas fa-times"></i></button>
         </div>
         
@@ -127,29 +141,29 @@
         <header class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50 backdrop-blur-md shrink-0">
             <div class="flex items-center">
                 <div class="mr-3">
-                    <h1 class="text-sm font-bold">Asistente Técnico IA</h1>
-                    <p class="text-[10px] text-green-400 flex items-center">
-                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-1"></span> EN LÍNEA
+                    <h1 class="text-sm font-bold text-white">ASISTENTE TÉCNICO V-PANEL</h1>
+                    <p class="text-[10px] text-[#00ffcc] flex items-center font-mono">
+                        <span class="w-2 h-2 bg-[#00ffcc] rounded-full animate-pulse mr-2 status-dot"></span> SISTEMA_ACTIVO
                     </p>
                 </div>
             </div>
-            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" class="w-8 h-8 opacity-80" alt="bot">
+            <i class="fas fa-microchip text-[#00ffcc] text-xl opacity-80"></i>
         </header>
 
         <main id="chat-box" class="chat-container p-4 flex flex-col space-y-4">
-            <div class="bot-msg p-3 rounded-2xl max-w-[85%] text-sm shadow-md border border-slate-700">
-                ¡Hola! Soy el experto de ElectroPanel Pro. ¿Qué duda técnica tienes sobre normativas o componentes hoy?
+            <div class="bot-msg p-4 rounded-2xl max-w-[88%] text-sm shadow-lg">
+                ¡Conexión establecida! Soy el experto de ElectroPanel Pro. ¿Tienes dudas sobre normativas CNE, IEC o componentes técnicos?
             </div>
         </main>
 
         <div class="input-area p-4 shrink-0">
             <div class="flex space-x-2">
                 <input type="text" id="userInput" 
-                    class="flex-1 bg-slate-800 border border-slate-700 rounded-full px-5 py-3 text-sm focus:outline-none focus:border-blue-500 text-white" 
-                    placeholder="Escribe tu consulta técnica..."
+                    class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 text-sm focus:outline-none focus:border-[#00ffcc] text-white placeholder-slate-500" 
+                    placeholder="Consultar manual técnico..."
                     autocomplete="off">
-                <button onclick="enviarMensaje()" class="bg-blue-600 p-3 rounded-full shadow-lg active:scale-90 transition-transform">
-                    <svg viewBox="0 0 24 24" class="w-5 h-5 fill-white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                <button onclick="enviarMensaje()" class="bg-[#00ffcc] p-3 rounded-xl shadow-lg active:scale-90 transition-transform flex items-center justify-center">
+                    <i class="fas fa-paper-plane text-slate-900"></i>
                 </button>
             </div>
         </div>
@@ -169,7 +183,7 @@
             if (!input.value.trim()) return;
 
             const userDiv = document.createElement('div');
-            userDiv.className = "user-msg p-3 rounded-2xl max-w-[85%] text-sm shadow-md";
+            userDiv.className = "user-msg p-4 rounded-2xl max-w-[88%] text-sm shadow-md";
             userDiv.innerText = input.value;
             box.appendChild(userDiv);
 
@@ -186,7 +200,7 @@
                 const data = await response.json();
 
                 const botDiv = document.createElement('div');
-                botDiv.className = "bot-msg p-3 rounded-2xl max-w-[85%] text-sm shadow-md border border-slate-700";
+                botDiv.className = "bot-msg p-4 rounded-2xl max-w-[88%] text-sm shadow-lg";
                 botDiv.innerText = data.respuesta;
                 box.appendChild(botDiv);
                 box.scrollTop = box.scrollHeight;

@@ -10,12 +10,12 @@
     
     <style>
         :root {
-            --bg-dark: #0d1117;
-            --card-bg: #161b22;
-            --border-color: #30363d;
-            --accent-blue: #58a6ff;
+            --bg-dark: #020617; /* Azul Noche profundo unificado */
+            --card-bg: #0b1120; /* Fondo de tarjetas unificado */
+            --border-color: #1e293b; 
+            --accent-blue: #00ffcc; /* Cambiado a tu Cian Eléctrico */
             --accent-green: #00ffcc; 
-            --whatsapp-green: #238636;
+            --whatsapp-green: #22c55e;
         }
 
         body { 
@@ -29,7 +29,7 @@
         /* --- NAVBAR --- */
         .navbar-mobile {
             position: fixed; top: 0; left: 0; width: 100%; height: 75px;
-            background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px);
+            background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; z-index: 1000;
@@ -42,7 +42,7 @@
         /* --- MENÚ OVERLAY --- */
         .menu-overlay {
             position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
-            background: rgba(13, 17, 23, 0.98); z-index: 2000; 
+            background: rgba(2, 6, 23, 0.98); z-index: 2000; 
             transition: 0.4s ease; padding: 30px; border-left: 1px solid var(--border-color);
         }
         .menu-overlay.active { right: 0; }
@@ -59,13 +59,14 @@
 
         .nav-item-btn.active {
             border-color: var(--accent-green) !important;
-            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
+            background: rgba(0, 255, 204, 0.05);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
         }
 
         /* --- HERO --- */
         .hero-mobile {
             padding: 60px 20px;
-            background: radial-gradient(circle at 50% 50%, #1f2937 0%, #0d1117 100%);
+            background: radial-gradient(circle at 50% 50%, #0b1120 0%, #020617 100%);
             border-bottom: 1px solid var(--border-color);
             display: flex; flex-direction: column; align-items: center; text-align: center;
         }
@@ -73,7 +74,7 @@
         .logo-main-circle {
             width: 140px; height: 140px; border-radius: 50%;
             border: 3px solid var(--accent-blue); padding: 5px;
-            background: var(--bg-dark); box-shadow: 0 0 30px rgba(88, 166, 255, 0.4);
+            background: var(--bg-dark); box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
             margin-bottom: 20px; object-fit: cover;
         }
 
@@ -86,11 +87,12 @@
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: 14px; padding: 20px; margin-bottom: 15px;
             text-align: center; display: flex; flex-direction: column; align-items: center;
-            transition: border-color 0.3s;
+            transition: 0.3s;
         }
+        .unified-card:hover { border-color: var(--accent-green); }
         .unified-card i { color: var(--accent-green); font-size: 1.6rem; margin-bottom: 15px; }
         .unified-card h6 { color: white; font-weight: 700; margin-bottom: 8px; font-size: 1rem; }
-        .unified-card p { font-size: 0.8rem; color: #8b949e; margin: 0; line-height: 1.5; }
+        .unified-card p { font-size: 0.8rem; color: #94a3b8; margin: 0; line-height: 1.5; }
 
         .sede-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -99,25 +101,25 @@
         }
         .sede-header { padding: 15px; border-bottom: 1px solid var(--border-color); }
         .sede-header h6 { margin: 0; color: white; font-weight: 700; }
-        .sede-header p { margin: 5px 0 0 0; font-size: 0.75rem; color: #8b949e; }
+        .sede-header p { margin: 5px 0 0 0; font-size: 0.75rem; color: #94a3b8; }
         .map-container-mobile { width: 100%; height: 180px; position: relative; }
-        .map-container-mobile iframe { width: 100%; height: 100%; border: 0; filter: grayscale(1) invert(0.9) contrast(1.2); opacity: 0.8; }
+        .map-container-mobile iframe { width: 100%; height: 100%; border: 0; filter: grayscale(1) invert(0.9) opacity(0.8); }
         .btn-maps-mobile {
             position: absolute; bottom: 10px; right: 10px;
-            background: rgba(88, 166, 255, 0.15); border: 1px solid var(--accent-blue);
+            background: rgba(0, 255, 204, 0.1); border: 1px solid var(--accent-blue);
             color: var(--accent-blue); padding: 5px 12px; border-radius: 8px;
             font-size: 0.7rem; text-decoration: none; backdrop-filter: blur(4px); font-weight: 600;
         }
 
-        /* --- NUEVA SECCIÓN CNC MÓVIL --- */
+        /* --- CNC MÓVIL --- */
         .video-box-mobile {
             border-radius: 14px; overflow: hidden; border: 1px solid var(--border-color);
             aspect-ratio: 16/9; background: #000; position: relative; margin-bottom: 20px;
         }
         .tech-badge-mobile {
-            background: var(--card-bg); padding: 5px 10px; border-radius: 6px;
+            background: var(--bg-dark); padding: 5px 10px; border-radius: 6px;
             font-family: 'Roboto Mono', monospace; font-size: 0.65rem; color: #fff;
-            border: 1px solid var(--border-color); display: inline-flex; align-items: center;
+            border: 1px solid var(--accent-blue); display: inline-flex; align-items: center;
             margin-top: -10px; position: relative; z-index: 5; margin-left: 15px;
         }
         .pulse-dot { height: 6px; width: 6px; background: var(--accent-green); border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
@@ -128,7 +130,7 @@
             border: 1px solid var(--border-color); margin-bottom: 12px;
         }
         .tech-mini-card-mobile h4 { color: var(--accent-green); font-size: 0.9rem; margin-bottom: 5px; font-weight: 700; }
-        .tech-mini-card-mobile p { font-size: 0.75rem; color: #8b949e; margin: 0; line-height: 1.4; }
+        .tech-mini-card-mobile p { font-size: 0.75rem; color: #94a3b8; margin: 0; line-height: 1.4; }
 
         .clean-list-mobile { list-style: none; padding: 0; margin-top: 15px; }
         .clean-list-mobile li { font-size: 0.75rem; color: #c9d1d9; margin-bottom: 8px; display: flex; align-items: center; }
@@ -138,7 +140,7 @@
             background: var(--whatsapp-green); color: white; padding: 16px;
             border-radius: 50px; display: flex; align-items: center; justify-content: center;
             text-decoration: none; font-weight: 700; font-size: 0.9rem; gap: 10px;
-            margin: 40px auto; max-width: 280px; box-shadow: 0 4px 15px rgba(35, 134, 54, 0.3);
+            margin: 40px auto; max-width: 280px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
         }
         footer { padding: 50px 20px; font-family: 'Roboto Mono', monospace; font-size: 0.7rem; text-align: center; color: #484f58; }
     </style>
@@ -155,7 +157,7 @@
 
     <div class="menu-overlay" id="menuOverlay">
         <div class="d-flex justify-content-between align-items-center">
-            <span style="font-family: 'Roboto Mono'; font-size: 0.8rem; color: var(--accent-blue);">// MENÚ SISTEMA</span>
+            <span style="font-family: 'Roboto Mono'; font-size: 0.8rem; color: var(--accent-blue);">// SISTEMA ACTIVO</span>
             <button class="menu-toggle" id="closeMenu"><i class="fas fa-times"></i></button>
         </div>
         <div class="menu-links">
@@ -169,10 +171,10 @@
 
     <div class="hero-mobile">
         <img src="{{ url_for('static', filename='img/logo_vpanel.png') }}" class="logo-main-circle">
-        <h1 style="color: var(--accent-green); font-weight: 800; font-size: 1.5rem; line-height: 1.3; margin: 0 0 8px 0;">
-            Diseño y Fabricación de<br>Tableros Eléctricos <span style="color: #f1c40f; font-size: 1.2rem;">⚡</span>
+        <h1 style="color: white; font-weight: 800; font-size: 1.5rem; line-height: 1.3; margin: 0 0 8px 0;">
+            Diseño y Fabricación de<br><span style="color: var(--accent-green);">Tableros Eléctricos</span> <span style="color: var(--accent-green); font-size: 1.2rem;">⚡</span>
         </h1>
-        <p class="text-secondary small" style="font-family: 'Roboto Mono'; letter-spacing: 1px;">Industrial Engineering & Design</p>
+        <p class="text-secondary small" style="font-family: 'Roboto Mono'; letter-spacing: 1px; color: #94a3b8 !important;">Industrial Engineering & Design</p>
     </div>
 
     <div class="container mt-4 px-4">
@@ -191,7 +193,7 @@
             </div>
         </div>
 
-        <h2 class="solutions-title">Soluciones</h2>
+        <h2 class="solutions-title">Soluciones <span style="color: var(--accent-green);">Técnicas</span></h2>
         
         <div class="unified-card" style="border-left: 3px solid var(--accent-green);">
             <i class="fas fa-bolt-lightning"></i>
@@ -208,7 +210,7 @@
         <div class="unified-card" style="border-left: 3px solid var(--accent-green);">
             <i class="fas fa-drafting-compass"></i>
             <h6>Ingeniería</h6>
-            <p>Cálculos eléctricos y optimización de cargas.</p>
+            <p>Cálculos eléctricos y optimización de cargas con modelado 3D.</p>
         </div>
 
         <div class="unified-card" style="border-left: 3px solid var(--accent-green);">
@@ -217,7 +219,7 @@
             <p>Servicio preventivo y correctivo de sistemas industriales.</p>
         </div>
 
-        <h2 class="quality-title">Calidad Industrial</h2>
+        <h2 class="quality-title">Calidad <span style="color: var(--accent-green);">Industrial</span></h2>
 
         <div class="unified-card" style="border-left: 3px solid var(--accent-green);">
             <i class="fas fa-shield-alt"></i>
@@ -232,48 +234,36 @@
         </div>
 
         <div class="unified-card" style="border-left: 3px solid var(--accent-green);">
-            <i class="fas fa-leaf"></i>
-            <h6>Eficiencia Energética</h6>
-            <p>Optimización de cargas para reducir pérdidas.</p>
-        </div>
-
-        <div class="unified-card" style="border-left: 3px solid var(--accent-green);">
             <i class="fas fa-user-shield"></i>
             <h6>Seguridad Operativa</h6>
             <p>Protocolos de bloqueo y protección de arco eléctrico.</p>
         </div>
 
-        <div class="unified-card" style="border-left: 3px solid var(--accent-green);">
-            <i class="fas fa-globe"></i>
-            <h6>Marcas Globales</h6>
-            <p>Equipamiento certificado bajo estándares internacionales.</p>
-        </div>
+        <h2 class="sedes-title">Nuestras <span style="color: var(--accent-green);">Sedes</span></h2>
 
-        <h2 class="sedes-title">Nuestras Sedes</h2>
-
-        <div class="sede-card" style="border-left: 3px solid #f1c40f;">
+        <div class="sede-card" style="border-left: 3px solid var(--accent-green);">
             <div class="sede-header">
                 <h6>Oficina Central</h6>
                 <p>Calle Emeterio Pérez 310, SMP, Lima 15102</p>
             </div>
             <div class="map-container-mobile">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3902.138407338575!2d-77.0652234!3d-12.0163351!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105cf65c87140e1%3A0xc3464a9386d52671!2sCalle%20Eleuterio%20Perez%20310%2C%20San%20Mart%C3%ADn%20de%20Porres%2015102!5e0!3m2!1ses-419!2spe!4v1712850000000!5m2!1ses-419!2spe" allowfullscreen="" loading="lazy"></iframe>
-                <a href="https://maps.app.goo.gl/..." target="_blank" class="btn-maps-mobile">VER EN MAPS</a>
+                <a href="#" target="_blank" class="btn-maps-mobile">VER EN MAPS</a>
             </div>
         </div>
 
-        <div class="sede-card" style="border-left: 3px solid #f1c40f;">
+        <div class="sede-card" style="border-left: 3px solid var(--accent-green);">
             <div class="sede-header">
                 <h6>Taller Principal</h6>
                 <p>Calle Luis Carranza 2174, Lima 15081</p>
             </div>
             <div class="map-container-mobile">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.815340632514!2d-77.0543216!3d-12.0467554!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8d6d6d6d6d7%3A0x6d6d6d6d6d6d6d6d!2sCalle%20Luis%20Carranza%202174%2C%20Lima%2015081!5e0!3m2!1ses-419!2spe!4v1712850000000!5m2!1ses-419!2spe" allowfullscreen="" loading="lazy"></iframe>
-                <a href="https://maps.app.goo.gl/..." target="_blank" class="btn-maps-mobile">VER EN MAPS</a>
+                <a href="#" target="_blank" class="btn-maps-mobile">VER EN MAPS</a>
             </div>
         </div>
 
-        <h2 class="tech-title">Corte Láser CNC</h2>
+        <h2 class="tech-title">Corte Láser <span style="color: var(--accent-green);">CNC</span></h2>
         
         <div class="video-box-mobile">
             <video id="maquinaVideoCel" autoplay muted loop playsinline controls style="width: 100%; height: 100%; object-fit: cover;">
@@ -287,15 +277,11 @@
         <div class="mt-4">
             <div class="tech-mini-card-mobile" style="border-left: 3px solid var(--accent-green);">
                 <h4>Alta Potencia en Fibra</h4>
-                <p>Tecnología de última generación para cortes sin rebabas y ensamblajes exactos.</p>
+                <p>Tecnología de última generación para cortes sin rebabas.</p>
             </div>
             <div class="tech-mini-card-mobile" style="border-left: 3px solid var(--accent-green);">
                 <h4>Plegado Robótico</h4>
-                <p>Aseguramos la estanqueidad grado IP65 con ángulos de precisión.</p>
-            </div>
-            <div class="tech-mini-card-mobile" style="border-left: 3px solid var(--accent-green);">
-                <h4>Integración Directa</h4>
-                <p>Sincronización total desde SolidWorks a nuestra línea de manufactura.</p>
+                <p>Aseguramos estanqueidad IP65 con ángulos exactos.</p>
             </div>
             
             <ul class="clean-list-mobile">
