@@ -2,73 +2,149 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visor Técnico - {{ proyecto.titulo }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Visor Técnico 3D | {{ proyecto.titulo }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono&display=swap" rel="stylesheet">
+    
     <style>
-        body { background-color: #0b1120; color: white; margin: 0; }
+        :root {
+            --bg-dark: #020617; /* Azul Noche */
+            --card-bg: #0b1120;
+            --accent-cyan: #00ffcc; /* Cian Eléctrico */
+            --border-color: #1e293b;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: #f8fafc; 
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding-bottom: 30px;
+        }
+
         model-viewer { 
             width: 100%; 
-            height: 60vh; 
-            background: radial-gradient(#1e293b, #0f172a);
+            height: 55vh; 
+            background: radial-gradient(circle, #0f172a 0%, #020617 100%);
+            --progress-bar-color: var(--accent-cyan);
         }
-        .tech-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid #334155; }
+
+        .tech-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--accent-cyan);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-tool {
+            background: #020617;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .btn-tool:active {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 255, 204, 0.05);
+            transform: scale(0.95);
+        }
+
+        .status-badge {
+            font-family: 'Roboto Mono', monospace;
+            background: rgba(0, 255, 204, 0.1);
+            color: var(--accent-cyan);
+            font-size: 0.65rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(0, 255, 204, 0.1);
+            border-top: 3px solid var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+        }
     </style>
 </head>
 <body class="p-4">
-    <div class="flex items-center mb-4">
-        <a href="/proyecto/{{ proyecto.id }}" class="text-blue-400 mr-4">← Volver</a>
-        <h1 class="text-lg font-bold truncate">{{ proyecto.titulo }}</h1>
+    
+    <div class="flex items-center justify-between mb-4">
+        <a href="/proyecto/{{ proyecto.id }}" class="text-[#00ffcc] flex items-center gap-2 text-xs font-bold no-underline uppercase tracking-tighter">
+            <i class="fas fa-arrow-left"></i> VOLVER
+        </a>
+        <span class="status-badge">ENGINEERING_VIEW_MODE</span>
     </div>
 
-    <div class="rounded-2xl overflow-hidden border border-blue-500/30 mb-6 shadow-2xl shadow-blue-500/10 relative">
+    <h1 class="text-xl font-extrabold text-white mb-4 truncate uppercase tracking-tight">{{ proyecto.titulo }}</h1>
+
+    <div class="rounded-2xl overflow-hidden border border-[#1e293b] mb-6 shadow-2xl relative">
         <model-viewer id="visor-cel" 
             src="{{ url_for('static', filename='models/' + proyecto.archivo_3d) }}"
             poster="/static/img/{{ proyecto.imagen }}"
             camera-controls 
             auto-rotate 
-            shadow-intensity="1" 
-            exposure="1"
+            shadow-intensity="2" 
+            exposure="1.2"
             ar
             ar-modes="webxr scene-viewer quick-look">
             
-            <div slot="poster" class="flex items-center justify-center h-full w-full bg-slate-900 text-slate-400 text-xs text-center p-10">
+            <div slot="poster" class="flex items-center justify-center h-full w-full bg-[#020617] text-slate-400 text-xs text-center p-10">
                 <div class="flex flex-col items-center">
-                    <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
-                    Cargando diseño técnico 3D...
+                    <div class="w-10 h-10 rounded-full animate-spin mb-4 loading-spinner"></div>
+                    <span class="font-mono tracking-widest uppercase">Cargando Renderizado...</span>
                 </div>
             </div>
         </model-viewer>
     </div>
 
-    <div class="tech-card rounded-xl p-5 mb-6">
-        <h3 class="text-blue-400 text-sm font-bold mb-4 uppercase tracking-widest">Herramientas de Ingeniería</h3>
+    <div class="tech-card rounded-2xl p-5 mb-6">
+        <div class="flex items-center gap-2 mb-4">
+            <i class="fas fa-layer-group text-[#00ffcc] text-xs"></i>
+            <h3 class="text-slate-400 text-[0.7rem] font-bold uppercase tracking-widest font-mono">Control de Visualización</h3>
+        </div>
         
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3 mb-6">
             <button onclick="document.getElementById('visor-cel').variantName = 'Transparent'" 
-                class="bg-slate-800 border border-slate-600 p-3 rounded-lg text-xs active:bg-blue-600 transition-colors">
-                🔍 MODO RAYOS X
+                class="btn-tool p-4 rounded-xl text-[0.65rem] font-bold text-white flex flex-col items-center gap-2 uppercase">
+                <i class="fas fa-cube text-[#00ffcc] text-lg opacity-50"></i> RAYOS X
             </button>
             <button onclick="document.getElementById('visor-cel').variantName = 'Default'" 
-                class="bg-slate-800 border border-slate-600 p-3 rounded-lg text-xs active:bg-blue-600 transition-colors">
-                🛠️ VISTA REAL
+                class="btn-tool p-4 rounded-xl text-[0.65rem] font-bold text-white flex flex-col items-center gap-2 uppercase">
+                <i class="fas fa-microchip text-[#00ffcc] text-lg opacity-50"></i> VISTA REAL
             </button>
         </div>
 
-        <div class="mt-6 border-t border-slate-700 pt-4">
-            <p class="text-xs text-slate-400 mb-2">Especificaciones técnicas:</p>
-            <ul class="text-sm space-y-2">
-                <li><span class="text-blue-300">Tensión:</span> {{ proyecto.tension }}</li>
-                <li><span class="text-blue-300">Grado IP:</span> {{ proyecto.ip }}</li>
-                <li><span class="text-blue-300">Material:</span> {{ proyecto.material }}</li>
-            </ul>
+        <div class="border-t border-slate-800 pt-4">
+            <h4 class="text-white text-xs font-bold mb-3 flex items-center gap-2">
+                <i class="fas fa-list-check text-[#00ffcc]"></i> ESPECIFICACIONES_TÉCNICAS
+            </h4>
+            <div class="grid grid-cols-1 gap-2">
+                <div class="flex justify-between border-b border-slate-800/50 py-2">
+                    <span class="text-slate-500 text-xs font-mono">TENSION_NOM</span>
+                    <span class="text-white text-xs font-bold">{{ proyecto.tension }}</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800/50 py-2">
+                    <span class="text-slate-500 text-xs font-mono">PROTECCION_IP</span>
+                    <span class="text-white text-xs font-bold">{{ proyecto.ip }}</span>
+                </div>
+                <div class="flex justify-between py-2">
+                    <span class="text-slate-500 text-xs font-mono">MATERIAL_BASE</span>
+                    <span class="text-white text-xs font-bold">{{ proyecto.material }}</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <a href="https://wa.me/971444230?text=Hola, quiero cotizar el {{ proyecto.titulo }}" 
-       class="block w-full bg-green-600 text-center py-4 rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-transform">
-        💬 COTIZAR AHORA
+    <a href="https://wa.me/971444230?text=Hola V-Panel, solicito cotización técnica para el sistema: {{ proyecto.titulo }}" 
+       class="flex items-center justify-center gap-3 w-full bg-[#00ffcc] text-[#020617] text-center py-4 rounded-xl font-extrabold text-sm shadow-xl active:scale-95 transition-all uppercase tracking-tighter">
+        <i class="fab fa-whatsapp text-lg"></i> SOLICITAR COTIZACIÓN DE INGENIERÍA
     </a>
+
+    <footer class="mt-8 text-center">
+        <p class="text-[0.6rem] text-slate-600 font-mono tracking-widest uppercase">V-PANEL PRO // DATASHEET_MOBILE_V2.0</p>
+    </footer>
+
 </body>
 </html>

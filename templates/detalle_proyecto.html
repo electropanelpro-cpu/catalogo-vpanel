@@ -20,8 +20,8 @@
         flex: 1;
         max-width: 350px;
         min-width: 290px;
-        background: #111827;
-        border: 1px solid rgba(0, 242, 255, 0.2);
+        background: #020617; /* Azul Noche */
+        border: 1px solid rgba(0, 255, 204, 0.2);
         border-radius: 20px;
         padding: 22px;
         color: white;
@@ -32,7 +32,7 @@
     }
 
     .panel-titulo {
-        color: #00f2ff;
+        color: #00ffcc; /* Cian Eléctrico */
         font-size: 0.95rem;
         font-weight: 800;
         margin-bottom: 18px;
@@ -41,7 +41,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        border-bottom: 1px solid rgba(0, 242, 255, 0.1);
+        border-bottom: 1px solid rgba(0, 255, 204, 0.1);
         padding-bottom: 10px;
     }
 
@@ -62,15 +62,15 @@
         overflow: hidden;
         margin-top: 10px;
         border-radius: 4px;
-        border: 1px solid rgba(0, 242, 255, 0.2);
+        border: 1px solid rgba(0, 255, 204, 0.2);
     }
 
     .onda-animada {
         position: absolute;
         width: 85%; 
         height: 100%;
-        background: linear-gradient(90deg, #00f2ff, #005f66);
-        box-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
+        background: linear-gradient(90deg, #00ffcc, #008f7a);
+        box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
         animation: pulso-carga 2s infinite ease-in-out;
     }
 
@@ -82,9 +82,9 @@
 
     /* BOTONES DE ACCIÓN */
     .btn-accion-tec {
-        background: rgba(0, 242, 255, 0.05);
-        border: 1px solid rgba(0, 242, 255, 0.2);
-        color: #00f2ff;
+        background: rgba(0, 255, 204, 0.05);
+        border: 1px solid rgba(0, 255, 204, 0.2);
+        color: #00ffcc;
         padding: 12px;
         border-radius: 8px;
         font-size: 0.75rem;
@@ -99,7 +99,7 @@
     }
 
     .btn-accion-tec:hover {
-        background: #00f2ff;
+        background: #00ffcc;
         color: #000;
     }
 
@@ -112,17 +112,17 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .item-bom span { color: #00f2ff; font-weight: bold; }
+    .item-bom span { color: #00ffcc; font-weight: bold; }
 
     /* TARJETA CENTRAL */
     .card {
         flex: 0 0 950px; 
-        background: #111827; 
+        background: #0b1120; 
         border-radius: 20px; 
         text-align: center;
         color: white;
         overflow: hidden; 
-        border: 1px solid rgba(0, 242, 255, 0.2);
+        border: 1px solid rgba(0, 255, 204, 0.2);
         box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
     }
 
@@ -130,7 +130,7 @@
         width: 100%; 
         height: 400px; 
         object-fit: contain; 
-        background: #0b1120;
+        background: #020617;
     }
 
     /* MODAL CONFIGURACIÓN */
@@ -139,7 +139,7 @@
         width: 100%; height: 100%; background: rgba(0,0,0,0.9);
         justify-content: center; align-items: center;
     }
-    .modal-box { background: #111827; padding: 30px; border-radius: 20px; border: 1px solid #00f2ff; width: 400px; color: white; }
+    .modal-box { background: #020617; padding: 30px; border-radius: 20px; border: 1px solid #00ffcc; width: 400px; color: white; }
 
     @media (max-width: 1550px) {
         .panel-lateral { display: none; }
@@ -153,10 +153,10 @@
         <div>
             <div class="panel-titulo">🛡️ Diagnóstico IA</div>
             <div style="font-family: monospace; font-size: 0.8rem; line-height: 1.8;">
-                <div>> ID PROYECTO: <span style="color:#00f2ff;">#00{{ proyecto.id }}</span></div>
-                <div>> TENSIÓN: <span style="color:#00f2ff;">{{ proyecto.tension }}</span></div>
-                <div>> PROTECCIÓN: <span style="color:#00f2ff;">{{ proyecto.ip }}</span></div>
-                <div>> MATERIAL: <span style="color:#00f2ff;">{{ proyecto.material }}</span></div>
+                <div>> ID PROYECTO: <span style="color:#00ffcc;">#00{{ proyecto.id }}</span></div>
+                <div>> TENSIÓN: <span style="color:#00ffcc;">{{ proyecto.tension }}</span></div>
+                <div>> PROTECCIÓN: <span style="color:#00ffcc;">{{ proyecto.ip }}</span></div>
+                <div>> MATERIAL: <span style="color:#00ffcc;">{{ proyecto.material }}</span></div>
             </div>
             
             <div class="monitor-box">
@@ -171,7 +171,7 @@
 
         <div>
             <a href="{{ url_for('descargar_plano', id=proyecto.id) }}" class="btn-accion-tec" target="_blank">📄 Ver Ficha Técnica</a>
-            <div class="btn-accion-tec" onclick="abrirConfig()" style="border-color: #6b7280; color: #9ca3af;">⚙️ Configuración</div>
+            <div class="btn-accion-tec" onclick="abrirConfig()" style="border-color: #334155; color: #64748b;">⚙️ Configuración</div>
         </div>
     </div>
 
@@ -179,8 +179,8 @@
         <img src="{{ url_for('static', filename='img/' + proyecto.imagen) }}" class="img-completa">
         <div class="info-proyecto" style="padding: 25px;">
             <h1 style="font-size: 1.8rem; margin-bottom: 10px;">{{ proyecto.titulo }}</h1>
-            <p style="color: #9ca3af; font-size: 0.95rem;">{{ proyecto.descripcion }}</p>
-            <a href="{{ url_for('visor3d', id=proyecto.id) }}" class="btn-ver" style="display:inline-block; background:#00f2ff; color:black; padding: 15px; width:80%; border-radius:10px; text-decoration:none; font-weight:bold; margin-top:15px; text-transform: uppercase;">
+            <p style="color: #94a3b8; font-size: 0.95rem;">{{ proyecto.descripcion }}</p>
+            <a href="{{ url_for('visor3d', id=proyecto.id) }}" class="btn-ver" style="display:inline-block; background:#00ffcc; color:black; padding: 15px; width:80%; border-radius:10px; text-decoration:none; font-weight:bold; margin-top:15px; text-transform: uppercase;">
                 🔷 VER MODELO 3D INTERACTIVO
             </a>
         </div>
@@ -194,10 +194,10 @@
             {% endfor %}
         </div>
 
-        <div style="background: rgba(0, 242, 255, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0, 242, 255, 0.3);">
-            <div style="font-size: 0.65rem; color: #00f2ff; margin-bottom: 5px;">TIEMPO DE FABRICACIÓN</div>
+        <div style="background: rgba(0, 255, 204, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(0, 255, 204, 0.3);">
+            <div style="font-size: 0.65rem; color: #00ffcc; margin-bottom: 5px;">TIEMPO DE FABRICACIÓN</div>
             <div style="font-size: 1.1rem; font-weight: bold; letter-spacing: 1px;">{{ proyecto.entrega }}</div>
-            <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 5px;">Validado por ElectroPanel Pro.</div>
+            <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Validado por ElectroPanel Pro.</div>
         </div>
     </div>
 
@@ -205,17 +205,17 @@
 
 <div id="modalConfig" class="modal-config">
     <div class="modal-box">
-        <h3 style="color: #00f2ff; margin-bottom: 15px;">Personalizar #00{{ proyecto.id }}</h3>
-        <p style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 20px;">Selecciona especificaciones adicionales para tu cotización.</p>
+        <h3 style="color: #00ffcc; margin-bottom: 15px;">Personalizar #00{{ proyecto.id }}</h3>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 20px;">Selecciona especificaciones adicionales para tu cotización.</p>
         <div style="margin-bottom: 15px;">
             <label style="font-size: 0.8rem;">Marca preferida:</label>
-            <select style="width:100%; padding:10px; background:#0b1120; color:white; border:1px solid #00f2ff; border-radius:5px; margin-top:5px;">
+            <select style="width:100%; padding:10px; background:#0b1120; color:white; border:1px solid #00ffcc; border-radius:5px; margin-top:5px;">
                 <option>Schneider Electric</option>
                 <option>Siemens</option>
                 <option>ABB</option>
             </select>
         </div>
-        <button onclick="cerrarConfig()" class="btn-accion-tec" style="width:100%; background:#00f2ff; color:black;">Guardar Preferencias</button>
+        <button onclick="cerrarConfig()" class="btn-accion-tec" style="width:100%; background:#00ffcc; color:black;">Guardar Preferencias</button>
     </div>
 </div>
 
