@@ -4,8 +4,8 @@
 
 <div style="display: flex; flex-direction: row; gap: 20px; width: 100%; min-height: 80vh; padding: 10px; box-sizing: border-box;">
 
-    <div class="card" style="flex: 3; margin: 0; position: relative; min-width: 0; background: #0f172a; border-radius: 12px; overflow: hidden;">
-        <h1 style="font-size: 1.5rem; margin: 15px; color: white;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
+    <div class="card" style="flex: 3; margin: 0; position: relative; min-width: 0; background: #0f172a; border-radius: 12px; overflow: hidden; border: 1px solid #334155;">
+        <h1 style="font-size: 1.5rem; margin: 15px; color: white; position: relative; z-index: 5;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
 
         <div class="edrawings-toolbar">
             <button onclick="resetCamera()" title="Vista Inicial"><i class="fas fa-home"></i></button>
@@ -13,16 +13,16 @@
             <button onclick="zoomOut()" title="Alejar"><i class="fas fa-search-minus"></i></button>
             
             <div class="view-dropdown">
-                <button title="Vistas Estándar"><i class="fas fa-desktop"></i> <i class="fas fa-caret-down" style="font-size: 0.7rem;"></i></button>
+                <button title="Vistas Estándar"><i class="fas fa-desktop"></i> <i class="fas fa-caret-down" style="font-size: 0.6rem;"></i></button>
                 <div class="dropdown-content">
-                    <a href="#" onclick="setView('0deg 90deg auto')">Frontal</a>
-                    <a href="#" onclick="setView('90deg 90deg auto')">Lateral</a>
-                    <a href="#" onclick="setView('0deg 0deg auto')">Superior</a>
-                    <a href="#" onclick="setView('45deg 45deg auto')">Isométrica</a>
+                    <a href="#" onclick="setView('0deg 90deg auto')">Vista Frontal</a>
+                    <a href="#" onclick="setView('90deg 90deg auto')">Vista Lateral</a>
+                    <a href="#" onclick="setView('0deg 0deg auto')">Vista Superior</a>
+                    <a href="#" onclick="setView('45deg 45deg auto')">Vista Isométrica</a>
                 </div>
             </div>
 
-            <button onclick="toggleFullscreen()" title="Pantalla Completa"><i class="fas fa-expand"></i></button>
+            <div style="width: 1px; background: #999; margin: 5px 2px;"></div> <button onclick="toggleFullscreen()" title="Pantalla Completa"><i class="fas fa-expand"></i></button>
         </div>
 
         <model-viewer
@@ -73,11 +73,13 @@
     };
 
     window.zoomIn = () => {
-        modelViewer.zoom(10);
+        const fov = parseFloat(modelViewer.fieldOfView.replace('deg', '')) || 45;
+        modelViewer.fieldOfView = `${Math.max(10, fov - 10)}deg`;
     };
 
     window.zoomOut = () => {
-        modelViewer.zoom(-10);
+        const fov = parseFloat(modelViewer.fieldOfView.replace('deg', '')) || 45;
+        modelViewer.fieldOfView = `${Math.min(80, fov + 10)}deg`;
     };
 
     window.toggleFullscreen = () => {
@@ -171,58 +173,75 @@
 </script>
 
 <style>
-    /* ESTILOS TOOLBAR EDRAWINGS */
+    /* BARRA EDRAWINGS DEFINITIVA: Gris metálico claro para contraste total */
     .edrawings-toolbar {
         position: absolute;
-        top: 60px; /* Debajo del título */
+        top: 20px;
         right: 20px;
         display: flex;
-        gap: 5px;
-        background: rgba(15, 23, 42, 0.8);
-        backdrop-filter: blur(10px);
-        padding: 5px;
-        border-radius: 10px;
-        border: 1px solid #1e293b;
-        z-index: 100;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        background: #e0e0e0; /* Color eDrawings original */
+        padding: 4px;
+        border-radius: 6px;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        border: 1px solid #ffffff;
     }
+
     .edrawings-toolbar button {
         background: transparent;
         border: none;
-        color: #94a3b8;
+        color: #444444;
         padding: 8px 12px;
         cursor: pointer;
         font-size: 1.1rem;
         transition: 0.2s;
-        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
     }
+
     .edrawings-toolbar button:hover {
-        color: #00ffcc;
-        background: rgba(0, 255, 204, 0.1);
+        background: #bdbdbd;
+        color: #000000;
     }
+
+    /* DROPDOWN VISTAS */
     .view-dropdown { position: relative; }
     .dropdown-content {
         display: none;
         position: absolute;
         right: 0;
-        background: #1e293b;
-        min-width: 120px;
-        border: 1px solid #334155;
-        border-radius: 8px;
-        z-index: 101;
+        top: 100%;
+        background: #ffffff;
+        min-width: 140px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        border-radius: 4px;
+        overflow: hidden;
         margin-top: 5px;
+        border: 1px solid #ccc;
     }
+
     .dropdown-content a {
-        color: white;
-        padding: 10px;
+        color: #333333;
+        padding: 10px 15px;
         text-decoration: none;
         display: block;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
+        font-family: sans-serif;
+        border-bottom: 1px solid #eee;
     }
-    .dropdown-content a:hover { background: #00ffcc; color: #020617; }
+
+    .dropdown-content a:last-child { border-bottom: none; }
+
+    .dropdown-content a:hover {
+        background-color: #00ffcc;
+        color: #020617;
+    }
+
     .view-dropdown:hover .dropdown-content { display: block; }
 
-    /* ESTILOS EXISTENTES */
+    /* ESTILOS DE LISTA EXISTENTES */
     .item-pieza-3d:hover { border-color: #00ffcc !important; background: #2d3a4f !important; transform: translateX(5px); }
     #menu-contextual-3d button:hover { background: #00ffcc !important; color: #020617 !important; }
     #lista-piezas::-webkit-scrollbar { width: 6px; }
