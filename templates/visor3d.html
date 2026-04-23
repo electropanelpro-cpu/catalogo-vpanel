@@ -9,6 +9,12 @@
         <h1 style="font-size: 1.5rem; margin: 15px; color: white; position: relative; z-index: 5;">🔷 Visor 3D - {{ proyecto.titulo }}</h1>
 
         <div class="edrawings-toolbar">
+            
+            <div class="explosion-container">
+                <i class="fas fa-cubes" style="font-size: 0.8rem; color: #555;"></i>
+                <input type="range" id="explosion-slider" min="0" max="1" step="0.01" value="0" title="Explotar Modelo">
+            </div>
+
             <button onclick="resetCamera()" title="Vista Inicial"><i class="fas fa-home"></i></button>
             <button onclick="zoomIn()" title="Acercar"><i class="fas fa-search-plus"></i></button>
             <button onclick="zoomOut()" title="Alejar"><i class="fas fa-search-minus"></i></button>
@@ -54,13 +60,62 @@
 
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
-<script>
+<script type="module">
     const modelViewer = document.querySelector("#visor-pro");
     const listaPiezas = document.querySelector("#lista-piezas");
     const menu = document.querySelector("#menu-contextual-3d");
+    const slider = document.querySelector("#explosion-slider");
+    const originalPositions = new Map();
     let piezaActualIndex = null;
 
-    // --- CONTROLES DE TOOLBAR ---
+    // --- LÓGICA DE EXPLOSIÓN ---
+    modelViewer.addEventListener('load', () => {
+        const scene = modelViewer.toObject3D();
+        originalPositions.clear();
+        
+        scene.traverse((node) => {
+            if (node.isMesh) {
+                originalPositions.set(node.uuid, {
+                    pos: node.position.clone(),
+                    dir: node.position.clone().normalize() 
+                });
+            }
+        });
+
+        slider.addEventListener('input', (e) => {
+            const factor = parseFloat(e.target.value) * 1.8; // Intensidad de la explosión
+            scene.traverse((node) => {
+                if (node.isMesh && originalPositions.has(node.uuid)) {
+                    const original = originalPositions.get(node.uuid);
+                    node.position.x = original.pos.x + (original.dir.x * factor);
+                    node.position.y = original.pos.y + (original.dir.y * factor);
+                    node.position.z = original.pos.z + (original.dir.z * factor);
+                }
+            });
+        });
+
+        // Cargar lista de piezas
+        listaPiezas.innerHTML = "";
+        const srcLower = modelViewer.src.toLowerCase();
+        const bibliotecaModelos = {
+            'tablero2': { 'color': 'Gabinete Principal', 'color.001': 'Panel de Montaje', 'color.13': 'Interruptor Termomagnético', 'color-4.007': 'Riel DIN' },
+            'tablero1': { 'color.064': 'Estructura TDF', 'color-30.017': 'Puerta Frontal', 'color-30.016': 'Barra de Cobre' }
+        };
+        let proyectoKey = srcLower.includes("tablero2") ? "tablero2" : (srcLower.includes("tablero1") ? "tablero1" : "");
+        const nombresActuales = bibliotecaModelos[proyectoKey] || {};
+
+        modelViewer.model.materials.forEach((material, index) => {
+            const nombreMostrar = nombresActuales[material.name] || material.name || `Pieza ${index + 1}`;
+            const div = document.createElement("div");
+            div.className = "item-pieza-3d";
+            div.innerHTML = `<span>${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
+            div.onclick = () => resaltarPieza(index);
+            div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); abrirMenu(e, index); };
+            listaPiezas.appendChild(div);
+        });
+    });
+
+    // --- FUNCIONES GLOBALES ---
     window.resetCamera = () => {
         modelViewer.cameraOrbit = '0deg 75deg auto';
         modelViewer.fieldOfView = 'auto';
@@ -74,31 +129,21 @@
     };
 
     window.zoomIn = () => {
-        const fov = parseFloat(modelViewer.fieldOfView.replace('deg', '')) || 45;
+        const fov = parseFloat(modelViewer.fieldOfView) || 45;
         modelViewer.fieldOfView = `${Math.max(10, fov - 8)}deg`;
     };
 
     window.zoomOut = () => {
-        const fov = parseFloat(modelViewer.fieldOfView.replace('deg', '')) || 45;
+        const fov = parseFloat(modelViewer.fieldOfView) || 45;
         modelViewer.fieldOfView = `${Math.min(80, fov + 8)}deg`;
     };
 
     window.toggleFullscreen = () => {
-        if (!document.fullscreenElement) {
-            modelViewer.requestFullscreen();
-        } else {
-            document.exitFullscreen();
-        }
-    };
-
-    // --- LÓGICA DE PIEZAS ---
-    const bibliotecaModelos = {
-        'tablero2': { 'color': 'Gabinete Principal', 'color.001': 'Panel de Montaje', 'color.13': 'Interruptor Termomagnético', 'color-4.007': 'Riel DIN' },
-        'tablero1': { 'color.064': 'Estructura TDF', 'color-30.017': 'Puerta Frontal', 'color-30.016': 'Barra de Cobre' }
+        if (!document.fullscreenElement) modelViewer.requestFullscreen();
+        else document.exitFullscreen();
     };
 
     function resaltarPieza(index) {
-        if (piezaActualIndex === index) { index = null; }
         piezaActualIndex = index;
         modelViewer.model.materials.forEach((mat, i) => {
             mat.setEmissiveFactor(i === index ? [0, 0.5, 0.4] : [0, 0, 0]);
@@ -108,24 +153,6 @@
             el.style.background = i === index ? "#2d3a4f" : "#1e293b";
         });
     }
-
-    modelViewer.addEventListener('load', () => {
-        listaPiezas.innerHTML = "";
-        const srcLower = modelViewer.src.toLowerCase();
-        let proyectoKey = srcLower.includes("tablero2") ? "tablero2" : (srcLower.includes("tablero1") ? "tablero1" : "");
-        const nombresActuales = bibliotecaModelos[proyectoKey] || {};
-        
-        modelViewer.model.materials.forEach((material, index) => {
-            const nombreMostrar = nombresActuales[material.name] || material.name || `Pieza ${index + 1}`;
-            const div = document.createElement("div");
-            div.className = "item-pieza-3d";
-            div.style = "background: #1e293b; padding: 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; justify-content: space-between; border: 1px solid rgba(0,255,204,0.1); color: white;";
-            div.innerHTML = `<span>${nombreMostrar}</span> <span id="status-${index}">🟢</span>`;
-            div.onclick = () => resaltarPieza(index);
-            div.oncontextmenu = (e) => { e.preventDefault(); e.stopPropagation(); abrirMenu(e, index); };
-            listaPiezas.appendChild(div);
-        });
-    });
 
     function abrirMenu(e, index) {
         piezaActualIndex = index;
@@ -161,22 +188,28 @@
     .edrawings-toolbar {
         position: absolute;
         top: 20px; right: 20px;
-        display: flex;
+        display: flex; align-items: center;
         background: #e0e0e0;
-        padding: 4px;
+        padding: 4px 8px;
         border-radius: 6px;
         z-index: 1000;
         box-shadow: 0 4px 15px rgba(0,0,0,0.6);
         border: 1px solid #ffffff;
     }
 
+    .explosion-container {
+        display: flex; align-items: center; gap: 8px;
+        padding-right: 10px; margin-right: 5px;
+        border-right: 1px solid #bbb;
+    }
+
+    #explosion-slider {
+        width: 70px; cursor: pointer; accent-color: #00ffcc; height: 4px;
+    }
+
     .edrawings-toolbar button {
-        background: transparent;
-        border: none;
-        color: #444;
-        padding: 8px 12px;
-        cursor: pointer;
-        font-size: 1.1rem;
+        background: transparent; border: none; color: #444;
+        padding: 8px 10px; cursor: pointer; font-size: 1.1rem;
         display: flex; align-items: center; justify-content: center;
         border-radius: 4px;
     }
@@ -188,6 +221,7 @@
         display: none; position: absolute; right: 0; top: 100%;
         background: #fff; min-width: 140px; border-radius: 4px;
         box-shadow: 0 8px 16px rgba(0,0,0,0.3); z-index: 1001;
+        border: 1px solid #ccc;
     }
 
     .dropdown-content a {
@@ -195,8 +229,15 @@
         display: block; font-size: 0.85rem; border-bottom: 1px solid #eee;
     }
 
-    .dropdown-content a:hover { background: #00ffcc; }
+    .dropdown-content a:hover { background: #00ffcc; color: #020617; }
     .view-dropdown:hover .dropdown-content { display: block; }
-    .item-pieza-3d:hover { border-color: #00ffcc !important; }
+
+    .item-pieza-3d {
+        background: #1e293b; padding: 12px; margin-bottom: 8px;
+        border-radius: 8px; cursor: pointer; color: white;
+        font-size: 0.8rem; display: flex; justify-content: space-between;
+        border: 1px solid rgba(0,255,204,0.1); transition: 0.3s;
+    }
+    .item-pieza-3d:hover { border-color: #00ffcc; background: #2d3a4f; }
 </style>
 {% endblock %}
